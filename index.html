@@ -6,875 +6,787 @@
   <title>ITProspect — IT Business Development App</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --bg: #ffffff;
-      --bg-secondary: #f5f5f3;
-      --text: #1a1a18;
-      --text-secondary: #6b6b66;
-      --border: rgba(0,0,0,0.12);
-      --border-md: rgba(0,0,0,0.2);
-      --accent: #185FA5;
-      --accent-dark: #0C447C;
-      --radius-md: 8px;
-      --radius-lg: 12px;
+      --bg:#fff; --bg2:#f5f5f3; --text:#1a1a18; --text2:#6b6b66;
+      --border:rgba(0,0,0,0.12); --bmd:rgba(0,0,0,0.2);
+      --accent:#185FA5; --adk:#0C447C; --rmd:8px; --rlg:12px;
     }
-
-    body { font-family: 'DM Sans', system-ui, sans-serif; background: var(--bg-secondary); color: var(--text); min-height: 100vh; }
-
+    body { font-family:'DM Sans',system-ui,sans-serif; background:var(--bg2); color:var(--text); min-height:100vh; }
     @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap');
-
-    .topbar {
-      background: var(--bg); border-bottom: 0.5px solid var(--border);
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 14px 28px; position: sticky; top: 0; z-index: 50; flex-wrap: wrap; gap: 8px;
-    }
-    .logo { font-size: 16px; font-weight: 600; }
-    .logo span { color: var(--accent); }
-    .nav { display: flex; gap: 4px; flex-wrap: wrap; }
-    .nav-btn {
-      font-size: 13px; padding: 7px 14px; border-radius: var(--radius-md);
-      border: none; background: transparent; color: var(--text-secondary);
-      cursor: pointer; transition: background 0.15s; font-family: inherit;
-    }
-    .nav-btn.active, .nav-btn:hover { background: var(--bg-secondary); color: var(--text); }
-
-    .btn {
-      font-size: 13px; padding: 7px 14px; border-radius: var(--radius-md);
-      border: 0.5px solid var(--border-md); background: transparent; color: var(--text);
-      cursor: pointer; font-family: inherit; transition: background 0.15s;
-    }
-    .btn:hover { background: var(--bg-secondary); }
-    .btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
-    .btn.primary:hover { background: var(--accent-dark); }
-    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
-    .main { max-width: 1100px; margin: 0 auto; padding: 24px; }
-
-    .metrics { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 12px; margin-bottom: 24px; }
-    .metric { background: var(--bg); border-radius: var(--radius-lg); border: 0.5px solid var(--border); padding: 16px 18px; }
-    .metric-label { font-size: 12px; color: var(--text-secondary); margin-bottom: 6px; }
-    .metric-value { font-size: 26px; font-weight: 600; }
-    .metric-value.blue  { color: #185FA5; }
-    .metric-value.green { color: #3B6D11; }
-    .metric-value.amber { color: #854F0B; }
-    .metric-value.coral { color: #993C1D; }
-
-    .section { display: none; }
-    .section.active { display: block; }
-
-    .card { background: var(--bg); border-radius: var(--radius-lg); border: 0.5px solid var(--border); padding: 18px 20px; margin-bottom: 14px; }
-
-    .filter-row { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
-    .filter-row input, .filter-row select {
-      font-size: 13px; padding: 7px 12px; border: 0.5px solid var(--border-md);
-      border-radius: var(--radius-md); background: var(--bg); color: var(--text); font-family: inherit;
-    }
-    .filter-row input { flex: 1; min-width: 160px; }
-
-    .badge { display: inline-block; font-size: 11px; padding: 2px 9px; border-radius: var(--radius-md); font-weight: 500; }
-    .badge-blue  { background: #E6F1FB; color: #0C447C; }
-    .badge-green { background: #EAF3DE; color: #27500A; }
-    .badge-amber { background: #FAEEDA; color: #633806; }
-    .badge-gray  { background: #F1EFE8; color: #444441; }
-
-    .lead-row { display: flex; align-items: center; gap: 14px; padding: 12px 0; border-bottom: 0.5px solid var(--border); }
-    .lead-row:last-child { border-bottom: none; }
-    .avatar { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; flex-shrink: 0; }
-    .av-blue   { background: #B5D4F4; color: #0C447C; }
-    .av-teal   { background: #9FE1CB; color: #085041; }
-    .av-amber  { background: #FAC775; color: #633806; }
-    .av-coral  { background: #F5C4B3; color: #712B13; }
-    .av-purple { background: #CECBF6; color: #3C3489; }
-    .lead-info { flex: 1; min-width: 0; }
-    .lead-name { font-size: 14px; font-weight: 500; }
-    .lead-sub  { font-size: 12px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .lead-meta { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-
-    .pipeline { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 14px; }
-    .pipeline-col { background: var(--bg-secondary); border-radius: var(--radius-lg); padding: 14px; }
-    .pipeline-col-header { font-size: 11px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 12px; display: flex; justify-content: space-between; }
-    .deal-card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius-md); padding: 12px 14px; margin-bottom: 8px; transition: border-color 0.15s; }
-    .deal-card:hover { border-color: var(--accent); }
-    .deal-name { font-size: 13px; font-weight: 500; margin-bottom: 3px; }
-    .deal-sub  { font-size: 12px; color: var(--text-secondary); }
-    .deal-meta { margin-top: 10px; display: flex; justify-content: space-between; align-items: center; }
-
-    .reminder-row { display: flex; align-items: center; gap: 14px; padding: 12px 0; border-bottom: 0.5px solid var(--border); }
-    .reminder-row:last-child { border-bottom: none; }
-    .reminder-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-    .dot-red   { background: #E24B4A; }
-    .dot-amber { background: #EF9F27; }
-    .dot-blue  { background: #378ADD; }
-    .reminder-info { flex: 1; }
-    .reminder-label { font-size: 14px; font-weight: 500; }
-    .reminder-sub   { font-size: 12px; color: var(--text-secondary); }
-
-    /* ---- PROSPECT SEARCH ---- */
-    .search-card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 20px; margin-bottom: 16px; }
-    .search-title { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
-    .search-sub   { font-size: 13px; color: var(--text-secondary); margin-bottom: 16px; }
-    .natural-row  { display: flex; gap: 8px; align-items: flex-start; margin-bottom: 16px; }
-    .natural-row textarea {
-      flex: 1; font-size: 14px; padding: 10px 12px;
-      border: 0.5px solid var(--border-md); border-radius: var(--radius-md);
-      background: var(--bg); color: var(--text); font-family: inherit;
-      resize: none; height: 54px; line-height: 1.5;
-    }
-    .natural-row textarea:focus { outline: none; border-color: var(--accent); }
-    .divider { display: flex; align-items: center; gap: 10px; margin: 0 0 16px; }
-    .divider-line { flex: 1; height: 0.5px; background: var(--border); }
-    .divider-label { font-size: 12px; color: var(--text-secondary); }
-    .s-filters { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 12px; }
-    .s-filters-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
-    .fg label { display: block; font-size: 11px; color: var(--text-secondary); margin-bottom: 5px; font-weight: 500; }
-    .fg input, .fg select { width: 100%; font-size: 13px; padding: 7px 12px; border: 0.5px solid var(--border-md); border-radius: var(--radius-md); background: var(--bg); color: var(--text); font-family: inherit; }
-    .size-btns { display: flex; gap: 6px; flex-wrap: wrap; }
-    .size-btn { font-size: 12px; padding: 5px 12px; border-radius: var(--radius-md); border: 0.5px solid var(--border-md); background: transparent; color: var(--text-secondary); cursor: pointer; transition: all 0.15s; font-family: inherit; }
-    .size-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
-    .search-actions { display: flex; gap: 8px; justify-content: flex-end; }
-
-    /* external link buttons */
-    .ext-btn {
-      display: inline-flex; align-items: center; gap: 5px;
-      font-size: 12px; padding: 4px 10px; border-radius: var(--radius-md);
-      border: 0.5px solid var(--border-md); background: transparent;
-      color: var(--text-secondary); cursor: pointer; font-family: inherit;
-      text-decoration: none; transition: background 0.15s;
-    }
-    .ext-btn:hover { background: var(--bg-secondary); color: var(--text); }
-    .ext-btn.google   { border-color: #4285F4; color: #185FA5; }
-    .ext-btn.google:hover { background: #E6F1FB; }
-    .ext-btn.linkedin { border-color: #0A66C2; color: #0A66C2; }
-    .ext-btn.linkedin:hover { background: #E6F1FB; }
-    .ext-btn svg { flex-shrink: 0; }
-
-    .results-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-    .results-count  { font-size: 13px; color: var(--text-secondary); }
-
-    .company-card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 16px 18px; margin-bottom: 10px; }
-    .company-top  { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 10px; }
-    .company-logo { width: 40px; height: 40px; border-radius: var(--radius-md); background: #E6F1FB; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; color: #0C447C; flex-shrink: 0; }
-    .company-info { flex: 1; min-width: 0; }
-    .company-name   { font-size: 14px; font-weight: 500; margin-bottom: 2px; }
-    .company-domain { font-size: 12px; color: var(--text-secondary); }
-    .company-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
-    .tag { font-size: 11px; padding: 2px 8px; border-radius: var(--radius-md); font-weight: 500; }
-    .tag-blue  { background: #E6F1FB; color: #0C447C; }
-    .tag-green { background: #EAF3DE; color: #27500A; }
-    .tag-amber { background: #FAEEDA; color: #633806; }
-    .tag-gray  { background: #F1EFE8; color: #444441; }
-
-    .research-row { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; padding: 10px 0; border-top: 0.5px solid var(--border); border-bottom: 0.5px solid var(--border); margin-bottom: 10px; }
-    .research-label { font-size: 11px; color: var(--text-secondary); margin-right: 2px; }
-
-    .company-contacts { display: none; }
-    .company-contacts.open { display: block; }
-    .contact-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 0.5px solid var(--border); }
-    .contact-row:last-child { border-bottom: none; }
-    .contact-av { width: 28px; height: 28px; border-radius: 50%; background: #9FE1CB; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; color: #085041; flex-shrink: 0; }
-    .contact-info  { flex: 1; min-width: 0; }
-    .contact-name  { font-size: 13px; font-weight: 500; }
-    .contact-meta  { font-size: 11px; color: var(--text-secondary); }
-    .contact-email { font-size: 11px; color: var(--text-secondary); font-family: monospace; }
-    .conf-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
-    .conf-high { background: #639922; }
-    .conf-med  { background: #EF9F27; }
-    .conf-low  { background: #B4B2A9; }
-    .contact-actions { display: flex; gap: 5px; align-items: center; flex-shrink: 0; }
-    .no-contacts { font-size: 12px; color: var(--text-secondary); padding: 8px 0; }
-
-    /* Modals */
-    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 200; align-items: center; justify-content: center; }
-    .modal-overlay.open { display: flex; }
-    .modal { background: var(--bg); border-radius: var(--radius-lg); border: 0.5px solid var(--border); padding: 28px; width: 92%; max-width: 480px; max-height: 90vh; overflow-y: auto; }
-    .modal-title { font-size: 16px; font-weight: 600; margin-bottom: 18px; }
-    .modal-field { margin-bottom: 14px; }
-    .modal-field label { display: block; font-size: 12px; color: var(--text-secondary); margin-bottom: 5px; }
-    .modal-field input, .modal-field select, .modal-field textarea { width: 100%; font-size: 13px; padding: 8px 12px; border: 0.5px solid var(--border-md); border-radius: var(--radius-md); background: var(--bg); color: var(--text); font-family: inherit; }
-    .modal-field textarea { height: 80px; resize: vertical; }
-    .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 18px; }
-
-    .ai-output { background: var(--bg-secondary); border-radius: var(--radius-md); padding: 14px; font-size: 13px; line-height: 1.7; color: var(--text); margin-top: 14px; display: none; white-space: pre-wrap; }
-    .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; margin-right: 6px; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    .api-banner { border-radius: var(--radius-md); padding: 12px 16px; font-size: 13px; margin-bottom: 14px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-    .api-banner.anth { background: #FAEEDA; border: 0.5px solid #FAC775; color: #633806; }
-    .api-banner.hunt { background: #FEF0E7; border: 0.5px solid #F9C4A8; color: #7A2D0E; }
-    .api-banner input { flex: 1; min-width: 180px; font-size: 13px; padding: 6px 10px; border: 0.5px solid rgba(0,0,0,0.15); border-radius: var(--radius-md); background: #fff; font-family: monospace; color: #222; }
-
-    .empty-state { text-align: center; padding: 40px 20px; color: var(--text-secondary); font-size: 13px; }
-    .loading-state { text-align: center; padding: 40px; color: var(--text-secondary); font-size: 13px; }
-
-    @media (max-width: 700px) {
-      .metrics  { grid-template-columns: repeat(2,1fr); }
-      .pipeline { grid-template-columns: 1fr 1fr; }
-      .s-filters { grid-template-columns: 1fr; }
-      .s-filters-2 { grid-template-columns: 1fr; }
-    }
-    @media (max-width: 480px) { .pipeline { grid-template-columns: 1fr; } }
+    .topbar { background:var(--bg); border-bottom:0.5px solid var(--border); display:flex; align-items:center; justify-content:space-between; padding:12px 22px; position:sticky; top:0; z-index:50; flex-wrap:wrap; gap:8px; }
+    .logo { font-size:16px; font-weight:600; } .logo span { color:var(--accent); }
+    .nav { display:flex; gap:2px; flex-wrap:wrap; }
+    .nav-btn { font-size:12px; padding:6px 11px; border-radius:var(--rmd); border:none; background:transparent; color:var(--text2); cursor:pointer; font-family:inherit; transition:background 0.15s; white-space:nowrap; }
+    .nav-btn.active,.nav-btn:hover { background:var(--bg2); color:var(--text); }
+    .nbadge { display:inline-block; background:#E24B4A; color:#fff; font-size:10px; padding:1px 5px; border-radius:10px; margin-left:3px; vertical-align:middle; }
+    .btn { font-size:13px; padding:7px 13px; border-radius:var(--rmd); border:0.5px solid var(--bmd); background:transparent; color:var(--text); cursor:pointer; font-family:inherit; transition:background 0.15s; text-decoration:none; display:inline-block; }
+    .btn:hover { background:var(--bg2); }
+    .btn.primary { background:var(--accent); color:#fff; border-color:var(--accent); }
+    .btn.primary:hover { background:var(--adk); }
+    .btn.teams  { background:#5558AF; color:#fff; border-color:#5558AF; }
+    .btn.teams:hover { background:#3d3f7e; }
+    .btn.success{ background:#3B6D11; color:#fff; border-color:#3B6D11; }
+    .btn:disabled { opacity:0.5; cursor:not-allowed; }
+    .main { max-width:1100px; margin:0 auto; padding:18px 22px; }
+    .metrics { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:10px; margin-bottom:18px; }
+    .metric { background:var(--bg); border-radius:var(--rlg); border:0.5px solid var(--border); padding:13px 15px; }
+    .mlabel { font-size:11px; color:var(--text2); margin-bottom:4px; }
+    .mval { font-size:22px; font-weight:600; }
+    .mval.blue{color:#185FA5;} .mval.green{color:#3B6D11;} .mval.amber{color:#854F0B;} .mval.coral{color:#993C1D;} .mval.purple{color:#534AB7;}
+    .section { display:none; } .section.active { display:block; }
+    .card { background:var(--bg); border-radius:var(--rlg); border:0.5px solid var(--border); padding:15px 17px; margin-bottom:12px; }
+    .pill { display:inline-block; font-size:11px; padding:2px 8px; border-radius:var(--rmd); font-weight:500; }
+    .pb { background:#E6F1FB; color:#0C447C; } .pg { background:#EAF3DE; color:#27500A; }
+    .pa { background:#FAEEDA; color:#633806; } .pgr { background:#F1EFE8; color:#444441; }
+    .pc { background:#FAECE7; color:#712B13; } .pp { background:#EEEDFE; color:#3C3489; }
+    .frow { display:flex; gap:8px; margin-bottom:13px; flex-wrap:wrap; }
+    .frow input,.frow select { font-size:13px; padding:6px 10px; border:0.5px solid var(--bmd); border-radius:var(--rmd); background:var(--bg); color:var(--text); font-family:inherit; }
+    .frow input { flex:1; min-width:130px; }
+    .lrow { display:flex; align-items:center; gap:11px; padding:10px 0; border-bottom:0.5px solid var(--border); }
+    .lrow:last-child { border-bottom:none; }
+    .av { width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:600; flex-shrink:0; }
+    .avbl{background:#B5D4F4;color:#0C447C;} .avt{background:#9FE1CB;color:#085041;}
+    .avam{background:#FAC775;color:#633806;} .avco{background:#F5C4B3;color:#712B13;} .avpu{background:#CECBF6;color:#3C3489;}
+    .li { flex:1; min-width:0; }
+    .ln { font-size:14px; font-weight:500; }
+    .ls { font-size:12px; color:var(--text2); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .lm { display:flex; align-items:center; gap:6px; flex-shrink:0; flex-wrap:wrap; }
+    .pipeline { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; }
+    .pcol { background:var(--bg2); border-radius:var(--rlg); padding:12px; }
+    .pch { font-size:11px; font-weight:600; color:var(--text2); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:10px; display:flex; justify-content:space-between; }
+    .dcard { background:var(--bg); border:0.5px solid var(--border); border-radius:var(--rmd); padding:10px 12px; margin-bottom:8px; transition:border-color 0.15s; }
+    .dcard:hover { border-color:var(--accent); }
+    .dn { font-size:13px; font-weight:500; margin-bottom:2px; }
+    .ds { font-size:11px; color:var(--text2); }
+    .dm { margin-top:8px; display:flex; justify-content:space-between; align-items:center; }
+    .rrow { display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:0.5px solid var(--border); }
+    .rrow:last-child { border-bottom:none; }
+    .rdot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+    .rr{background:#E24B4A;} .ra{background:#EF9F27;} .rbl{background:#378ADD;}
+    .crow { display:flex; align-items:center; gap:11px; padding:10px 0; border-bottom:0.5px solid var(--border); }
+    .crow:last-child { border-bottom:none; }
+    .cicon { width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:13px; flex-shrink:0; }
+    .cout{background:#EAF3DE;} .cin{background:#E6F1FB;} .cmiss{background:#FCEBEB;}
+    .ci { flex:1; min-width:0; }
+    .cn2 { font-size:13px; font-weight:500; }
+    .cm { font-size:11px; color:var(--text2); }
+    .ca { display:flex; gap:6px; flex-shrink:0; flex-wrap:wrap; }
+    .tabs { display:flex; border-bottom:0.5px solid var(--border); margin-bottom:14px; }
+    .tab { font-size:13px; padding:7px 14px; border-bottom:2px solid transparent; cursor:pointer; color:var(--text2); background:none; border-left:none; border-right:none; border-top:none; font-family:inherit; }
+    .tab.active { border-bottom-color:var(--accent); color:var(--text); font-weight:500; }
+    .shead { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:14px; flex-wrap:wrap; gap:8px; }
+    .stitle { font-size:15px; font-weight:600; }
+    .ssub { font-size:12px; color:var(--text2); margin-top:2px; }
+    .drow { display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:0.5px solid var(--border); }
+    .drow:last-child { border-bottom:none; }
+    .di { flex:1; min-width:0; }
+    .dn2 { font-size:13px; font-weight:500; }
+    .dp { font-size:12px; color:var(--text2); }
+    .da { display:flex; gap:6px; flex-shrink:0; }
+    .new-tag { display:inline-block; background:#E24B4A; color:#fff; font-size:10px; font-weight:600; padding:1px 6px; border-radius:4px; margin-left:6px; animation:pulse 2s ease infinite; }
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.6}}
+    .drcard { background:var(--bg); border:0.5px solid var(--border); border-radius:var(--rlg); padding:13px 15px; margin-bottom:10px; }
+    .drcard.isnew { border-color:#378ADD; border-width:1.5px; }
+    .drtop { display:flex; align-items:flex-start; gap:10px; margin-bottom:8px; }
+    .drlogo { width:36px; height:36px; border-radius:var(--rmd); background:#E6F1FB; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:600; color:#0C447C; flex-shrink:0; }
+    .drinfo { flex:1; min-width:0; }
+    .drname { font-size:14px; font-weight:500; }
+    .drdom { font-size:12px; color:var(--text2); }
+    .resrow { display:flex; gap:6px; flex-wrap:wrap; align-items:center; padding:8px 0; border-top:0.5px solid var(--border); margin-top:6px; }
+    .reslbl { font-size:11px; color:var(--text2); }
+    .ebt { display:inline-flex; align-items:center; gap:4px; font-size:12px; padding:3px 9px; border-radius:var(--rmd); border:0.5px solid var(--bmd); background:transparent; color:var(--text2); text-decoration:none; transition:background 0.15s; }
+    .ebt:hover { background:var(--bg2); color:var(--text); }
+    .ebt.google { border-color:#4285F4; color:#185FA5; }
+    .ebt.google:hover { background:#E6F1FB; }
+    .ebt.linkedin { border-color:#0A66C2; color:#0A66C2; }
+    .ebt.linkedin:hover { background:#E6F1FB; }
+    .scard { background:var(--bg); border:0.5px solid var(--border); border-radius:var(--rlg); padding:17px; margin-bottom:13px; }
+    .sf3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:9px; margin-bottom:11px; }
+    .sf2 { display:grid; grid-template-columns:1fr 1fr; gap:9px; margin-bottom:13px; }
+    .fg label { display:block; font-size:11px; color:var(--text2); margin-bottom:4px; font-weight:500; }
+    .fg input,.fg select { width:100%; font-size:13px; padding:6px 10px; border:0.5px solid var(--bmd); border-radius:var(--rmd); background:var(--bg); color:var(--text); font-family:inherit; }
+    .szbtns { display:flex; gap:5px; flex-wrap:wrap; }
+    .szbtn { font-size:12px; padding:4px 10px; border-radius:var(--rmd); border:0.5px solid var(--bmd); background:transparent; color:var(--text2); cursor:pointer; font-family:inherit; }
+    .szbtn.active { background:var(--accent); color:#fff; border-color:var(--accent); }
+    .nrow { display:flex; gap:8px; align-items:flex-start; margin-bottom:13px; }
+    .nrow textarea { flex:1; font-size:13px; padding:8px 11px; border:0.5px solid var(--bmd); border-radius:var(--rmd); background:var(--bg); color:var(--text); font-family:inherit; resize:none; height:48px; line-height:1.5; }
+    .dvdr { display:flex; align-items:center; gap:10px; margin:0 0 13px; }
+    .dvdr-line { flex:1; height:0.5px; background:var(--border); }
+    .dvdr-lbl { font-size:12px; color:var(--text2); }
+    .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:200; align-items:center; justify-content:center; }
+    .modal-overlay.open { display:flex; }
+    .modal { background:var(--bg); border-radius:var(--rlg); border:0.5px solid var(--border); padding:22px; width:92%; max-width:480px; max-height:90vh; overflow-y:auto; }
+    .mtitle { font-size:15px; font-weight:600; margin-bottom:14px; }
+    .mf { margin-bottom:11px; }
+    .mf label { display:block; font-size:12px; color:var(--text2); margin-bottom:4px; }
+    .mf input,.mf select,.mf textarea { width:100%; font-size:13px; padding:7px 10px; border:0.5px solid var(--bmd); border-radius:var(--rmd); background:var(--bg); color:var(--text); font-family:inherit; }
+    .mf textarea { height:80px; resize:vertical; }
+    .mact { display:flex; gap:8px; justify-content:flex-end; margin-top:14px; }
+    .aout { background:var(--bg2); border-radius:var(--rmd); padding:12px; font-size:13px; line-height:1.7; color:var(--text); margin-top:11px; display:none; white-space:pre-wrap; }
+    .spin { display:inline-block; width:13px; height:13px; border:2px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin 0.7s linear infinite; vertical-align:middle; margin-right:5px; }
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .abanner { border-radius:var(--rmd); padding:9px 13px; font-size:12px; margin-bottom:9px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+    .abanner.anth { background:#FAEEDA; border:0.5px solid #FAC775; color:#633806; }
+    .abanner.hunt { background:#FEF0E7; border:0.5px solid #F9C4A8; color:#7A2D0E; }
+    .abanner.pbx  { background:#EEEDFE; border:0.5px solid #AFA9EC; color:#3C3489; }
+    .abanner input { flex:1; min-width:150px; font-size:12px; padding:4px 8px; border:0.5px solid rgba(0,0,0,0.15); border-radius:var(--rmd); background:#fff; font-family:monospace; color:#222; }
+    .estate { text-align:center; padding:32px 18px; color:var(--text2); font-size:13px; }
+    .lstate { text-align:center; padding:28px; color:var(--text2); font-size:13px; }
+    .rhead { display:flex; align-items:center; justify-content:space-between; margin-bottom:11px; }
+    .rcnt { font-size:13px; color:var(--text2); }
+    .cocard { background:var(--bg); border:0.5px solid var(--border); border-radius:var(--rlg); padding:14px 16px; margin-bottom:10px; }
+    .cocard.isnew { border-color:#378ADD; border-width:1.5px; }
+    .cotop { display:flex; align-items:flex-start; gap:11px; margin-bottom:9px; }
+    .colog { width:38px; height:38px; border-radius:var(--rmd); background:#E6F1FB; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:600; color:#0C447C; flex-shrink:0; }
+    .coinf { flex:1; min-width:0; }
+    .conm { font-size:14px; font-weight:500; }
+    .codom { font-size:12px; color:var(--text2); }
+    .cotags { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px; }
+    .tag { font-size:11px; padding:2px 8px; border-radius:var(--rmd); font-weight:500; }
+    .tbl{background:#E6F1FB;color:#0C447C;} .tgr{background:#EAF3DE;color:#27500A;}
+    .tam{background:#FAEEDA;color:#633806;} .tgy{background:#F1EFE8;color:#444441;}
+    .cocts { display:none; }
+    .cocts.open { display:block; }
+    .ctrow { display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:0.5px solid var(--border); }
+    .ctrow:last-child { border-bottom:none; }
+    .ctav { width:28px; height:28px; border-radius:50%; background:#9FE1CB; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:600; color:#085041; flex-shrink:0; }
+    .ctinf { flex:1; min-width:0; }
+    .ctnm { font-size:13px; font-weight:500; }
+    .ctmt { font-size:11px; color:var(--text2); }
+    .ctem { font-size:11px; color:var(--text2); font-family:monospace; }
+    .cfdot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+    .cfh{background:#639922;} .cfm{background:#EF9F27;} .cfl{background:#B4B2A9;}
+    .ctac { display:flex; gap:5px; align-items:center; flex-shrink:0; }
+    .noctact { font-size:12px; color:var(--text2); padding:8px 0; }
+    @media(max-width:700px){.metrics{grid-template-columns:repeat(3,1fr)}.pipeline{grid-template-columns:1fr 1fr}.sf3{grid-template-columns:1fr}.sf2{grid-template-columns:1fr}}
+    @media(max-width:480px){.pipeline{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(2,1fr)}}
   </style>
 </head>
 <body>
-
 <div class="topbar">
   <div class="logo">IT<span>Prospect</span></div>
   <div class="nav">
-    <button class="nav-btn active" onclick="switchSection('leads',this)">Leads</button>
-    <button class="nav-btn" onclick="switchSection('pipeline',this)">Pipeline</button>
-    <button class="nav-btn" onclick="switchSection('reminders',this)">Reminders</button>
-    <button class="nav-btn" onclick="switchSection('search',this)">&#128269; Find prospects</button>
+    <button class="nav-btn active" onclick="sw('leads',this)">Leads</button>
+    <button class="nav-btn" onclick="sw('pipeline',this)">Pipeline</button>
+    <button class="nav-btn" onclick="sw('calls',this)">Calls</button>
+    <button class="nav-btn" onclick="sw('reminders',this)">Reminders</button>
+    <button class="nav-btn" id="disc-btn" onclick="sw('discovery',this)">&#128197; Daily discovery</button>
+    <button class="nav-btn" onclick="sw('search',this)">&#128269; Search</button>
   </div>
-  <button class="btn primary" onclick="openModal('add-lead')">+ Add lead</button>
+  <button class="btn primary" onclick="openM('add-lead')">+ Add lead</button>
 </div>
-
 <div class="main">
-
-  <div class="api-banner anth" id="banner-anth">
-    <span>&#9888; Anthropic API key (AI outreach + smart search parsing):</span>
-    <input type="password" id="anth-input" placeholder="sk-ant-..." />
-    <button class="btn" onclick="saveKey('anth')">Save</button>
-  </div>
-
-  <div class="api-banner hunt" id="banner-hunt">
-    <span>&#128269; Hunter.io API key (email contact discovery):</span>
-    <input type="password" id="hunt-input" placeholder="Your Hunter.io key..." />
-    <button class="btn" onclick="saveKey('hunt')">Save</button>
-  </div>
-
+  <div class="abanner anth" id="ban-anth"><span>&#9888; Anthropic key (AI outreach):</span><input type="password" id="anth-in" placeholder="sk-ant-..."/><button class="btn" onclick="saveK('anth')" style="padding:4px 10px;font-size:12px;">Save</button></div>
+  <div class="abanner hunt" id="ban-hunt"><span>&#128269; Hunter.io key (email discovery):</span><input type="password" id="hunt-in" placeholder="Your Hunter.io key..."/><button class="btn" onclick="saveK('hunt')" style="padding:4px 10px;font-size:12px;">Save</button></div>
+  <div class="abanner pbx" id="ban-pbx"><span>&#128222; PBX/VoIP scheme (e.g. <code>tel:</code> <code>3cx:</code> <code>rcmobile://</code>):</span><input type="text" id="pbx-in" placeholder="tel:"/><button class="btn" onclick="saveK('pbx')" style="padding:4px 10px;font-size:12px;">Save</button></div>
   <div class="metrics">
-    <div class="metric"><div class="metric-label">Total leads</div><div class="metric-value blue"  id="m-leads">7</div></div>
-    <div class="metric"><div class="metric-label">Pipeline value</div><div class="metric-value green" id="m-value">$401k</div></div>
-    <div class="metric"><div class="metric-label">Deals in progress</div><div class="metric-value amber" id="m-deals">4</div></div>
-    <div class="metric"><div class="metric-label">Follow-ups due</div><div class="metric-value coral" id="m-due">4</div></div>
+    <div class="metric"><div class="mlabel">Total leads</div><div class="mval blue" id="m-leads">7</div></div>
+    <div class="metric"><div class="mlabel">Pipeline value</div><div class="mval green" id="m-value">$401k</div></div>
+    <div class="metric"><div class="mlabel">In progress</div><div class="mval amber" id="m-deals">4</div></div>
+    <div class="metric"><div class="mlabel">Follow-ups due</div><div class="mval coral" id="m-due">4</div></div>
+    <div class="metric"><div class="mlabel">New today</div><div class="mval purple" id="m-new">0</div></div>
   </div>
 
   <!-- LEADS -->
   <div class="section active" id="section-leads">
-    <div class="filter-row">
-      <input type="text" placeholder="Search company or contact..." id="lead-search" oninput="renderLeads()" />
-      <select id="filter-size" onchange="renderLeads()">
-        <option value="">All sizes</option><option value="SMB">SMB</option><option value="Enterprise">Enterprise</option>
-      </select>
-      <select id="filter-industry" onchange="renderLeads()">
-        <option value="">All industries</option><option>Finance</option><option>Healthcare</option>
-        <option>Retail</option><option>Manufacturing</option><option>Technology</option>
-        <option>Legal</option><option>Construction</option><option>Education</option>
-      </select>
-      <select id="filter-status" onchange="renderLeads()">
-        <option value="">All statuses</option><option>New</option><option>Contacted</option>
-        <option>Qualified</option><option>Proposal</option>
-      </select>
+    <div class="frow">
+      <input type="text" placeholder="Search company or contact..." id="lead-search" oninput="renderLeads()"/>
+      <select id="fs" onchange="renderLeads()"><option value="">All sizes</option><option>SMB</option><option>Enterprise</option></select>
+      <select id="fi" onchange="renderLeads()"><option value="">All industries</option><option>Finance</option><option>Healthcare</option><option>Retail</option><option>Manufacturing</option><option>Technology</option><option>Legal</option><option>Construction</option><option>Education</option></select>
+      <select id="fst" onchange="renderLeads()"><option value="">All statuses</option><option>New</option><option>Contacted</option><option>Qualified</option><option>Proposal</option></select>
     </div>
     <div class="card" id="leads-list"></div>
   </div>
 
   <!-- PIPELINE -->
-  <div class="section" id="section-pipeline">
-    <div class="pipeline" id="pipeline-board"></div>
+  <div class="section" id="section-pipeline"><div class="pipeline" id="pipeline-board"></div></div>
+
+  <!-- CALLS -->
+  <div class="section" id="section-calls">
+    <div class="shead">
+      <div><div class="stitle">Call log</div><div class="ssub">Track outbound &amp; inbound calls — log notes, schedule follow-ups, call directly from the app</div></div>
+      <div style="display:flex;gap:8px;"><button class="btn" onclick="openM('log-call')">+ Log call</button><button class="btn primary" onclick="openM('quick-call')">&#128222; Quick call</button></div>
+    </div>
+    <div class="tabs">
+      <button class="tab active" onclick="swCallTab('all',this)">All calls</button>
+      <button class="tab" onclick="swCallTab('outbound',this)">Outbound</button>
+      <button class="tab" onclick="swCallTab('inbound',this)">Inbound</button>
+      <button class="tab" onclick="swCallTab('missed',this)">Missed</button>
+    </div>
+    <div class="card" id="calls-list"></div>
   </div>
 
   <!-- REMINDERS -->
-  <div class="section" id="section-reminders">
-    <div class="card" id="reminders-list"></div>
+  <div class="section" id="section-reminders"><div class="card" id="reminders-list"></div></div>
+
+  <!-- DAILY DISCOVERY -->
+  <div class="section" id="section-discovery">
+    <div class="shead">
+      <div><div class="stitle">Daily prospect discovery</div><div class="ssub">Saved searches run automatically each morning — new companies highlighted in blue</div></div>
+      <div style="display:flex;gap:8px;"><button class="btn" onclick="openM('add-search')">+ Save search</button><button class="btn primary" onclick="runAllDisc()" id="run-all-btn">&#9654; Run all now</button></div>
+    </div>
+    <div class="card" id="saved-searches" style="margin-bottom:18px;"></div>
+    <div id="disc-results"><div class="estate"><div style="font-size:26px;margin-bottom:8px;">&#128197;</div><div>Save a search above — the app will automatically find new companies each time you open it.</div></div></div>
   </div>
 
-  <!-- PROSPECT SEARCH -->
+  <!-- SEARCH -->
   <div class="section" id="section-search">
-
-    <div class="search-card">
-      <div class="search-title">Prospect search</div>
-      <div class="search-sub">Describe what you're looking for — searches Hunter.io for emails and generates one-click Google, LinkedIn &amp; Maps links for every company found</div>
-
-      <div class="natural-row">
-        <textarea id="natural-query" placeholder='e.g. "Find me companies with 100 users in Niagara Falls" or "law firms in Hamilton Ontario"'></textarea>
-        <button class="btn primary" onclick="parseAndSearch()" id="ai-parse-btn">Search &#8599;</button>
+    <div class="scard">
+      <div style="font-size:15px;font-weight:600;margin-bottom:4px;">Prospect search</div>
+      <div style="font-size:13px;color:var(--text2);margin-bottom:13px;">Describe what you're looking for — searches Hunter.io and generates one-click Google, LinkedIn &amp; Maps links</div>
+      <div class="nrow"><textarea id="nq" placeholder='e.g. "Find me companies with 100 users in Niagara Falls" or "law firms in Hamilton"'></textarea><button class="btn primary" onclick="parseAndSearch()" id="ai-btn">Search &#8599;</button></div>
+      <div class="dvdr"><div class="dvdr-line"></div><div class="dvdr-lbl">or filter manually</div><div class="dvdr-line"></div></div>
+      <div class="sf3">
+        <div class="fg"><label>City / Region</label><input type="text" id="f-city" placeholder="e.g. Niagara Falls"/></div>
+        <div class="fg"><label>Industry</label><select id="f-ind"><option value="">Any</option><option>Finance</option><option>Healthcare</option><option>Manufacturing</option><option>Retail</option><option>Technology</option><option>Education</option><option>Legal</option><option>Construction</option><option>Hospitality</option><option>Logistics</option></select></div>
+        <div class="fg"><label>Keyword</label><input type="text" id="f-kw" placeholder="e.g. law firm, clinic..."/></div>
       </div>
-
-      <div class="divider">
-        <div class="divider-line"></div>
-        <div class="divider-label">or filter manually</div>
-        <div class="divider-line"></div>
+      <div class="sf2">
+        <div class="fg"><label>Company size</label><div class="szbtns"><button class="szbtn active" onclick="tgSz(this,'')">Any</button><button class="szbtn" onclick="tgSz(this,'1-10')">1–10</button><button class="szbtn" onclick="tgSz(this,'11-50')">11–50</button><button class="szbtn" onclick="tgSz(this,'51-200')">51–200</button><button class="szbtn" onclick="tgSz(this,'201-500')">201–500</button><button class="szbtn" onclick="tgSz(this,'500+')">500+</button></div></div>
+        <div class="fg"><label>Min. contacts</label><select id="f-mc"><option value="0">Any</option><option value="1">1+</option><option value="3">3+</option><option value="5">5+</option></select></div>
       </div>
-
-      <div class="s-filters">
-        <div class="fg"><label>City / Region</label><input type="text" id="f-city" placeholder="e.g. Niagara Falls" /></div>
-        <div class="fg"><label>Industry</label>
-          <select id="f-industry">
-            <option value="">Any industry</option>
-            <option>Finance</option><option>Healthcare</option><option>Manufacturing</option>
-            <option>Retail</option><option>Technology</option><option>Education</option>
-            <option>Legal</option><option>Construction</option><option>Hospitality</option><option>Logistics</option>
-          </select>
-        </div>
-        <div class="fg"><label>Company keyword</label><input type="text" id="f-keyword" placeholder="e.g. law firm, clinic..." /></div>
-      </div>
-
-      <div class="s-filters-2">
-        <div class="fg">
-          <label>Company size</label>
-          <div class="size-btns">
-            <button class="size-btn active" onclick="toggleSize(this,'')">Any</button>
-            <button class="size-btn" onclick="toggleSize(this,'1-10')">1–10</button>
-            <button class="size-btn" onclick="toggleSize(this,'11-50')">11–50</button>
-            <button class="size-btn" onclick="toggleSize(this,'51-200')">51–200</button>
-            <button class="size-btn" onclick="toggleSize(this,'201-500')">201–500</button>
-            <button class="size-btn" onclick="toggleSize(this,'500+')">500+</button>
-          </div>
-        </div>
-        <div class="fg"><label>Min. contacts found</label>
-          <select id="f-mincontacts">
-            <option value="0">Any</option><option value="1">1+</option>
-            <option value="3">3+</option><option value="5">5+</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="search-actions">
+      <div style="display:flex;gap:8px;justify-content:flex-end;">
         <button class="btn" onclick="clearSearch()">Clear</button>
+        <button class="btn" onclick="saveCurrentSearch()">&#128190; Save search</button>
         <button class="btn primary" onclick="doSearch()" id="search-btn">Find prospects</button>
       </div>
     </div>
-
-    <div id="results-area">
-      <div class="empty-state">
-        <div style="font-size:28px;margin-bottom:8px;">&#128269;</div>
-        <div>Describe the kind of business you're looking for, then hit search.</div>
-        <div style="font-size:12px;color:#9b9b96;margin-top:6px;">Each result includes one-click Google, LinkedIn, Maps &amp; News links.</div>
-      </div>
-    </div>
-
+    <div id="results-area"><div class="estate"><div style="font-size:26px;margin-bottom:8px;">&#128269;</div><div>Describe the kind of business you're looking for, then hit search.</div><div style="font-size:12px;color:#9b9b96;margin-top:5px;">Each result includes one-click Google, LinkedIn, Maps &amp; News links.</div></div></div>
   </div>
 </div>
 
-<!-- ADD LEAD MODAL -->
-<div class="modal-overlay" id="modal-add-lead">
-  <div class="modal">
-    <div class="modal-title">Add new lead</div>
-    <div class="modal-field"><label>Company name</label><input type="text" id="new-company" placeholder="Acme Corp" /></div>
-    <div class="modal-field"><label>Contact name</label><input type="text" id="new-contact" placeholder="Jane Smith" /></div>
-    <div class="modal-field"><label>Industry</label>
-      <select id="new-industry"><option>Finance</option><option>Healthcare</option><option>Retail</option><option>Manufacturing</option><option>Technology</option><option>Legal</option><option>Construction</option><option>Education</option></select>
-    </div>
-    <div class="modal-field"><label>Company size</label>
-      <select id="new-size"><option>SMB</option><option>Enterprise</option></select>
-    </div>
-    <div class="modal-field"><label>Deal value ($)</label><input type="number" id="new-value" placeholder="25000" /></div>
-    <div class="modal-actions">
-      <button class="btn" onclick="closeModals()">Cancel</button>
-      <button class="btn primary" onclick="addLead()">Add lead</button>
-    </div>
-  </div>
-</div>
+<!-- MODALS -->
+<div class="modal-overlay" id="modal-add-lead"><div class="modal">
+  <div class="mtitle">Add new lead</div>
+  <div class="mf"><label>Company</label><input type="text" id="nl-co" placeholder="Acme Corp"/></div>
+  <div class="mf"><label>Contact name</label><input type="text" id="nl-cn" placeholder="Jane Smith"/></div>
+  <div class="mf"><label>Phone</label><input type="tel" id="nl-ph" placeholder="+1 905 555 0100"/></div>
+  <div class="mf"><label>Email</label><input type="email" id="nl-em" placeholder="jane@acme.com"/></div>
+  <div class="mf"><label>Industry</label><select id="nl-in"><option>Finance</option><option>Healthcare</option><option>Retail</option><option>Manufacturing</option><option>Technology</option><option>Legal</option><option>Construction</option><option>Education</option></select></div>
+  <div class="mf"><label>Size</label><select id="nl-sz"><option>SMB</option><option>Enterprise</option></select></div>
+  <div class="mf"><label>Deal value ($)</label><input type="number" id="nl-val" placeholder="25000"/></div>
+  <div class="mact"><button class="btn" onclick="closeM()">Cancel</button><button class="btn primary" onclick="addLead()">Add lead</button></div>
+</div></div>
 
-<!-- OUTREACH MODAL -->
-<div class="modal-overlay" id="modal-outreach">
-  <div class="modal">
-    <div class="modal-title" id="outreach-title">Generate outreach</div>
-    <div class="modal-field"><label>Outreach type</label>
-      <select id="outreach-type">
-        <option>Cold email — introduction</option>
-        <option>Follow-up after no reply</option>
-        <option>LinkedIn connection request</option>
-        <option>Meeting request</option>
-      </select>
-    </div>
-    <div class="modal-field">
-      <label>Key pain point to address</label>
-      <input type="text" id="outreach-pain" placeholder="e.g. outdated infrastructure, security gaps..." />
-    </div>
-    <button class="btn primary" onclick="generateOutreach()" style="width:100%">Generate with AI &#8599;</button>
-    <div class="ai-output" id="ai-output"></div>
-    <div class="modal-actions" style="margin-top:10px;">
-      <button class="btn" onclick="closeModals()">Close</button>
-      <button class="btn primary" onclick="copyOutreach()">Copy message</button>
-    </div>
-  </div>
-</div>
+<div class="modal-overlay" id="modal-outreach"><div class="modal">
+  <div class="mtitle" id="ot-title">Generate outreach</div>
+  <div class="mf"><label>Outreach type</label><select id="ot-type"><option>Cold email — introduction</option><option>Follow-up after no reply</option><option>LinkedIn connection request</option><option>Meeting request</option><option>Post-call follow-up</option></select></div>
+  <div class="mf"><label>Key pain point</label><input type="text" id="ot-pain" placeholder="e.g. outdated infrastructure, security gaps..."/></div>
+  <button class="btn primary" onclick="genOutreach()" style="width:100%">Generate with AI &#8599;</button>
+  <div class="aout" id="ai-out"></div>
+  <div class="mact" style="margin-top:10px;"><button class="btn" onclick="closeM()">Close</button><button class="btn primary" onclick="copyOutreach()">Copy message</button></div>
+</div></div>
 
-<!-- IMPORT MODAL -->
-<div class="modal-overlay" id="modal-import">
-  <div class="modal">
-    <div class="modal-title" id="import-title">Import contact as lead</div>
-    <div class="modal-field"><label>Company name</label><input type="text" id="imp-company" /></div>
-    <div class="modal-field"><label>Contact name</label><input type="text" id="imp-contact" /></div>
-    <div class="modal-field"><label>Email (from Hunter.io)</label><input type="text" id="imp-email" readonly style="background:var(--bg-secondary);" /></div>
-    <div class="modal-field"><label>Industry</label>
-      <select id="imp-industry"><option>Finance</option><option>Healthcare</option><option>Retail</option><option>Manufacturing</option><option>Technology</option><option>Legal</option><option>Construction</option><option>Education</option></select>
-    </div>
-    <div class="modal-field"><label>Company size</label>
-      <select id="imp-size"><option>SMB</option><option>Enterprise</option></select>
-    </div>
-    <div class="modal-field"><label>Deal value ($)</label><input type="number" id="imp-value" placeholder="25000" /></div>
-    <div class="modal-actions">
-      <button class="btn" onclick="closeModals()">Cancel</button>
-      <button class="btn primary" onclick="confirmImport()">Import to leads &#8594;</button>
-    </div>
-  </div>
-</div>
+<div class="modal-overlay" id="modal-import"><div class="modal">
+  <div class="mtitle" id="imp-title">Import contact as lead</div>
+  <div class="mf"><label>Company</label><input type="text" id="imp-co"/></div>
+  <div class="mf"><label>Contact name</label><input type="text" id="imp-cn"/></div>
+  <div class="mf"><label>Email</label><input type="text" id="imp-em" readonly style="background:var(--bg2);"/></div>
+  <div class="mf"><label>Industry</label><select id="imp-in"><option>Finance</option><option>Healthcare</option><option>Retail</option><option>Manufacturing</option><option>Technology</option><option>Legal</option><option>Construction</option><option>Education</option></select></div>
+  <div class="mf"><label>Size</label><select id="imp-sz"><option>SMB</option><option>Enterprise</option></select></div>
+  <div class="mf"><label>Deal value ($)</label><input type="number" id="imp-val" placeholder="25000"/></div>
+  <div class="mact"><button class="btn" onclick="closeM()">Cancel</button><button class="btn primary" onclick="confirmImport()">Import to leads &#8594;</button></div>
+</div></div>
 
+<div class="modal-overlay" id="modal-log-call"><div class="modal">
+  <div class="mtitle">Log a call</div>
+  <div class="mf"><label>Contact / Company</label><input type="text" id="lc-ct" placeholder="Jane Smith — Acme Corp"/></div>
+  <div class="mf"><label>Phone number</label><input type="tel" id="lc-ph" placeholder="+1 905 555 0100"/></div>
+  <div class="mf"><label>Direction</label><select id="lc-dir"><option value="outbound">Outbound (I called them)</option><option value="inbound">Inbound (they called me)</option><option value="missed">Missed call</option></select></div>
+  <div class="mf"><label>Duration</label><select id="lc-dur"><option value="0">No answer / voicemail</option><option value="2">~2 minutes</option><option value="5">~5 minutes</option><option value="10">~10 minutes</option><option value="20">~20 minutes</option><option value="30">30+ minutes</option></select></div>
+  <div class="mf"><label>Call notes</label><textarea id="lc-notes" placeholder="What was discussed? Any next steps?"></textarea></div>
+  <div class="mf"><label>Schedule follow-up</label><input type="date" id="lc-fu"/></div>
+  <div class="mact"><button class="btn" onclick="closeM()">Cancel</button><button class="btn primary" onclick="logCall()">Save call</button></div>
+</div></div>
+
+<div class="modal-overlay" id="modal-quick-call"><div class="modal">
+  <div class="mtitle">&#128222; Quick call</div>
+  <div style="font-size:13px;color:var(--text2);margin-bottom:13px;">Pick a lead or enter a number — then choose how to dial.</div>
+  <div class="mf"><label>Select lead</label><select id="qc-lead" onchange="popQC()"><option value="">— choose a lead —</option></select></div>
+  <div class="mf"><label>Phone number</label><input type="tel" id="qc-ph" placeholder="+1 905 555 0100"/></div>
+  <div id="qc-btns" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:13px;"></div>
+  <div class="mact" style="margin-top:12px;"><button class="btn" onclick="closeM()">Close</button></div>
+</div></div>
+
+<div class="modal-overlay" id="modal-call-notes"><div class="modal">
+  <div class="mtitle" id="cno-title">Call notes</div>
+  <div id="cno-body" style="font-size:13px;line-height:1.7;"></div>
+  <div class="mact"><button class="btn" onclick="closeM()">Close</button></div>
+</div></div>
+
+<div class="modal-overlay" id="modal-add-search"><div class="modal">
+  <div class="mtitle">Save a daily search</div>
+  <div style="font-size:13px;color:var(--text2);margin-bottom:13px;">This search runs automatically each time you open the app. New companies are flagged in blue.</div>
+  <div class="mf"><label>Search name</label><input type="text" id="ss-name" placeholder='e.g. Finance firms — Niagara Falls'/></div>
+  <div class="mf"><label>City / Region</label><input type="text" id="ss-city" placeholder="e.g. Niagara Falls"/></div>
+  <div class="mf"><label>Industry</label><select id="ss-ind"><option value="">Any</option><option>Finance</option><option>Healthcare</option><option>Manufacturing</option><option>Retail</option><option>Technology</option><option>Education</option><option>Legal</option><option>Construction</option><option>Hospitality</option><option>Logistics</option></select></div>
+  <div class="mf"><label>Keyword</label><input type="text" id="ss-kw" placeholder="e.g. law firm, clinic..."/></div>
+  <div class="mact"><button class="btn" onclick="closeM()">Cancel</button><button class="btn primary" onclick="saveSS()">Save &amp; run</button></div>
+</div></div>
 <script>
-  const avColors = ['av-blue','av-teal','av-amber','av-coral','av-purple'];
-  const statusColors = { New:'badge-blue', Contacted:'badge-gray', Qualified:'badge-green', Proposal:'badge-amber' };
-  const colOrder = ['New','Contacted','Qualified','Proposal'];
+const AVC=['avbl','avt','avam','avco','avpu'];
+const STC={New:'pb',Contacted:'pgr',Qualified:'pg',Proposal:'pa'};
+const COLS=['New','Contacted','Qualified','Proposal'];
 
-  let leads = [
-    {id:1,company:'Maple Financial',contact:'David Chen',industry:'Finance',size:'Enterprise',status:'New',value:85000,initials:'MF',av:0},
-    {id:2,company:'NorthMed Health',contact:"Sarah O'Brien",industry:'Healthcare',size:'Enterprise',status:'Contacted',value:120000,initials:'NH',av:1},
-    {id:3,company:'Bright Retail Co',contact:'Tom Wallis',industry:'Retail',size:'SMB',status:'Qualified',value:22000,initials:'BR',av:2},
-    {id:4,company:'Forge Manufacturing',contact:'Anita Patel',industry:'Manufacturing',size:'SMB',status:'Proposal',value:34000,initials:'FM',av:3},
-    {id:5,company:'BlueSky Tech',contact:'James Ruiz',industry:'Technology',size:'SMB',status:'New',value:18000,initials:'BT',av:4},
-    {id:6,company:'Capital Trust',contact:'Linda Park',industry:'Finance',size:'Enterprise',status:'Contacted',value:95000,initials:'CT',av:0},
-    {id:7,company:'CareFirst Clinics',contact:'Mark Ellis',industry:'Healthcare',size:'SMB',status:'New',value:27000,initials:'CC',av:1},
-  ];
+let leads=[
+  {id:1,company:'Maple Financial',contact:'David Chen',phone:'+1 905 555 0101',email:'d.chen@maple.com',industry:'Finance',size:'Enterprise',status:'New',value:85000,initials:'MF',av:0},
+  {id:2,company:'NorthMed Health',contact:"Sarah O'Brien",phone:'+1 905 555 0102',email:'s.obrien@northmed.com',industry:'Healthcare',size:'Enterprise',status:'Contacted',value:120000,initials:'NH',av:1},
+  {id:3,company:'Bright Retail Co',contact:'Tom Wallis',phone:'+1 905 555 0103',email:'tom@brightretail.com',industry:'Retail',size:'SMB',status:'Qualified',value:22000,initials:'BR',av:2},
+  {id:4,company:'Forge Manufacturing',contact:'Anita Patel',phone:'+1 905 555 0104',email:'a.patel@forgemfg.com',industry:'Manufacturing',size:'SMB',status:'Proposal',value:34000,initials:'FM',av:3},
+  {id:5,company:'BlueSky Tech',contact:'James Ruiz',phone:'+1 905 555 0105',email:'j.ruiz@bluesky.io',industry:'Technology',size:'SMB',status:'New',value:18000,initials:'BT',av:4},
+  {id:6,company:'Capital Trust',contact:'Linda Park',phone:'+1 905 555 0106',email:'l.park@captrust.com',industry:'Finance',size:'Enterprise',status:'Contacted',value:95000,initials:'CT',av:0},
+  {id:7,company:'CareFirst Clinics',contact:'Mark Ellis',phone:'+1 905 555 0107',email:'m.ellis@carefirst.ca',industry:'Healthcare',size:'SMB',status:'New',value:27000,initials:'CC',av:1},
+];
+let reminders=[
+  {label:'Follow up with NorthMed Health',sub:'Last contacted 8 days ago',urg:'r'},
+  {label:'Send proposal to Forge Manufacturing',sub:'Due today',urg:'r'},
+  {label:'Check in with Capital Trust',sub:'Due tomorrow',urg:'a'},
+  {label:'Schedule demo for Bright Retail Co',sub:'Due in 3 days',urg:'a'},
+  {label:'Connect with BlueSky Tech on LinkedIn',sub:'Due in 5 days',urg:'bl'},
+];
+let callLog=JSON.parse(localStorage.getItem('itp_calls')||'[]');
+let savedSearches=JSON.parse(localStorage.getItem('itp_ss')||'[]');
+let seenDomains=new Set(JSON.parse(localStorage.getItem('itp_seen')||'[]'));
+let discResults=[];
+let newToday=0;
+let curLead=null;
+let pendImport=null;
+let selSz='';
+let lastRes=[];
+let callTab='all';
 
-  let reminders = [
-    {label:'Follow up with NorthMed Health',sub:'Last contacted 8 days ago',urgency:'red'},
-    {label:'Send proposal to Forge Manufacturing',sub:'Due today',urgency:'red'},
-    {label:'Check in with Capital Trust',sub:'Due tomorrow',urgency:'amber'},
-    {label:'Schedule demo for Bright Retail Co',sub:'Due in 3 days',urgency:'amber'},
-    {label:'Connect with BlueSky Tech on LinkedIn',sub:'Due in 5 days',urgency:'blue'},
-  ];
+let anthK=localStorage.getItem('itp_anth')||'';
+let huntK=localStorage.getItem('itp_hunt')||'';
+let pbxS=localStorage.getItem('itp_pbx')||'tel:';
 
-  let currentLead = null;
-  let pendingImport = null;
-  let selectedSize = '';
-  let lastResults = [];
+if(anthK) document.getElementById('ban-anth').style.display='none';
+if(huntK) document.getElementById('ban-hunt').style.display='none';
 
-  let anthKey = localStorage.getItem('itp_anth') || '';
-  let huntKey = localStorage.getItem('itp_hunt') || '';
+function saveK(t){
+  if(t==='anth'){anthK=document.getElementById('anth-in').value.trim();if(anthK){localStorage.setItem('itp_anth',anthK);document.getElementById('ban-anth').style.display='none';}}
+  else if(t==='hunt'){huntK=document.getElementById('hunt-in').value.trim();if(huntK){localStorage.setItem('itp_hunt',huntK);document.getElementById('ban-hunt').style.display='none';}}
+  else{pbxS=document.getElementById('pbx-in').value.trim()||'tel:';localStorage.setItem('itp_pbx',pbxS);document.getElementById('ban-pbx').style.display='none';}
+}
 
-  if (anthKey) document.getElementById('banner-anth').style.display = 'none';
-  if (huntKey) document.getElementById('banner-hunt').style.display = 'none';
+function sw(s,btn){
+  document.querySelectorAll('.section').forEach(e=>e.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(e=>e.classList.remove('active'));
+  document.getElementById('section-'+s).classList.add('active');
+  btn.classList.add('active');
+  if(s==='pipeline') renderPipeline();
+  if(s==='reminders') renderReminders();
+  if(s==='calls') renderCalls();
+  if(s==='discovery') renderDiscovery();
+}
 
-  function saveKey(type) {
-    if (type === 'anth') {
-      anthKey = document.getElementById('anth-input').value.trim();
-      if (anthKey) { localStorage.setItem('itp_anth', anthKey); document.getElementById('banner-anth').style.display = 'none'; }
-    } else {
-      huntKey = document.getElementById('hunt-input').value.trim();
-      if (huntKey) { localStorage.setItem('itp_hunt', huntKey); document.getElementById('banner-hunt').style.display = 'none'; }
-    }
-  }
+function openM(id){document.getElementById('modal-'+id).classList.add('open');}
+function closeM(){document.querySelectorAll('.modal-overlay').forEach(m=>m.classList.remove('open'));const o=document.getElementById('ai-out');if(o){o.style.display='none';o.textContent='';}}
 
-  function switchSection(s, btn) {
-    document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
-    document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
-    document.getElementById('section-' + s).classList.add('active');
-    btn.classList.add('active');
-    if (s === 'pipeline') renderPipeline();
-    if (s === 'reminders') renderReminders();
-  }
+/* LEADS */
+function renderLeads(){
+  const q=document.getElementById('lead-search').value.toLowerCase();
+  const sz=document.getElementById('fs').value;
+  const ind=document.getElementById('fi').value;
+  const st=document.getElementById('fst').value;
+  const f=leads.filter(l=>(!q||l.company.toLowerCase().includes(q)||l.contact.toLowerCase().includes(q))&&(!sz||l.size===sz)&&(!ind||l.industry===ind)&&(!st||l.status===st));
+  const el=document.getElementById('leads-list');
+  if(!f.length){el.innerHTML='<p style="color:#6b6b66;font-size:13px;padding:6px 0;">No leads match your filters.</p>';return;}
+  el.innerHTML=f.map(l=>`<div class="lrow">
+    <div class="av ${AVC[l.av]}">${l.initials}</div>
+    <div class="li"><div class="ln">${l.company}</div><div class="ls">${l.contact}${l.phone?' &middot; '+l.phone:''} &middot; ${l.industry} &middot; ${l.size}</div></div>
+    <div class="lm">
+      <span class="pill ${STC[l.status]}">${l.status}</span>
+      <span style="font-size:12px;color:#6b6b66;">$${(l.value/1000).toFixed(0)}k</span>
+      ${l.phone?`<button class="btn" onclick="callLead(${l.id})" title="Call" style="padding:4px 8px;font-size:13px;">&#128222;</button>`:''}
+      <button class="btn" onclick="openOutreach(${l.id})" style="font-size:12px;padding:4px 10px;">Outreach &#8599;</button>
+    </div>
+  </div>`).join('');
+  updateMetrics();
+}
 
-  function renderLeads() {
-    const search = document.getElementById('lead-search').value.toLowerCase();
-    const size   = document.getElementById('filter-size').value;
-    const ind    = document.getElementById('filter-industry').value;
-    const stat   = document.getElementById('filter-status').value;
-    const f = leads.filter(l =>
-      (!search || l.company.toLowerCase().includes(search) || l.contact.toLowerCase().includes(search)) &&
-      (!size || l.size === size) && (!ind || l.industry === ind) && (!stat || l.status === stat)
-    );
-    const el = document.getElementById('leads-list');
-    if (!f.length) { el.innerHTML = '<p style="color:#6b6b66;font-size:13px;padding:8px 0;">No leads match your filters.</p>'; return; }
-    el.innerHTML = f.map(l => `
-      <div class="lead-row">
-        <div class="avatar ${avColors[l.av]}">${l.initials}</div>
-        <div class="lead-info">
-          <div class="lead-name">${l.company}</div>
-          <div class="lead-sub">${l.contact} &middot; ${l.industry} &middot; ${l.size}${l.email ? ' &middot; ' + l.email : ''}</div>
-        </div>
-        <div class="lead-meta">
-          <span class="badge ${statusColors[l.status]}">${l.status}</span>
-          <span style="font-size:12px;color:#6b6b66;">$${(l.value/1000).toFixed(0)}k</span>
-          <button class="btn" onclick="openOutreach(${l.id})">Outreach &#8599;</button>
-        </div>
-      </div>`).join('');
-    updateMetrics();
-  }
+function renderPipeline(){
+  document.getElementById('pipeline-board').innerHTML=COLS.map(col=>{
+    const cl=leads.filter(l=>l.status===col);const tot=cl.reduce((s,l)=>s+l.value,0);
+    return `<div class="pcol"><div class="pch"><span>${col}</span><span>${cl.length}</span></div>${cl.map(l=>`<div class="dcard"><div class="dn">${l.company}</div><div class="ds">${l.contact}</div><div class="dm"><span class="pill pb">$${(l.value/1000).toFixed(0)}k</span><span style="font-size:11px;color:#6b6b66;">${l.industry}</span></div></div>`).join('')}<div style="font-size:11px;color:#6b6b66;margin-top:8px;text-align:right;">$${(tot/1000).toFixed(0)}k total</div></div>`;
+  }).join('');
+}
 
-  function renderPipeline() {
-    document.getElementById('pipeline-board').innerHTML = colOrder.map(col => {
-      const cl = leads.filter(l => l.status === col);
-      const tot = cl.reduce((s,l) => s+l.value, 0);
-      return `<div class="pipeline-col">
-        <div class="pipeline-col-header"><span>${col}</span><span>${cl.length}</span></div>
-        ${cl.map(l => `<div class="deal-card">
-          <div class="deal-name">${l.company}</div>
-          <div class="deal-sub">${l.contact}</div>
-          <div class="deal-meta">
-            <span class="badge badge-blue">$${(l.value/1000).toFixed(0)}k</span>
-            <span style="font-size:11px;color:#6b6b66;">${l.industry}</span>
-          </div></div>`).join('')}
-        <div style="font-size:11px;color:#6b6b66;margin-top:8px;text-align:right;">$${(tot/1000).toFixed(0)}k total</div>
-      </div>`;
-    }).join('');
-  }
+function renderReminders(){
+  document.getElementById('reminders-list').innerHTML=reminders.map((r,i)=>{
+    const dc={'r':'rr','a':'ra','bl':'rbl'}[r.urg]||'rbl';
+    return `<div class="rrow" id="rem-${i}"><div class="rdot ${dc}"></div><div style="flex:1"><div style="font-size:13px;font-weight:500;">${r.label}</div><div style="font-size:12px;color:#6b6b66;">${r.sub}</div></div><button class="btn" onclick="markDone(${i})" style="font-size:12px;padding:4px 10px;">Done</button></div>`;
+  }).join('');
+}
 
-  function renderReminders() {
-    document.getElementById('reminders-list').innerHTML = reminders.map((r,i) => `
-      <div class="reminder-row" id="rem-${i}">
-        <div class="reminder-dot dot-${r.urgency}"></div>
-        <div class="reminder-info">
-          <div class="reminder-label">${r.label}</div>
-          <div class="reminder-sub">${r.sub}</div>
-        </div>
-        <button class="btn" onclick="markDone(${i})">Done</button>
-      </div>`).join('');
-  }
+function markDone(i){
+  const r=document.getElementById('rem-'+i);
+  r.style.opacity='0.4';r.querySelector('button').textContent='Done \u2713';r.querySelector('button').disabled=true;
+  document.getElementById('m-due').textContent=Math.max(0,parseInt(document.getElementById('m-due').textContent)-1);
+}
 
-  function markDone(i) {
-    const row = document.getElementById('rem-'+i);
-    row.style.opacity = '0.4';
-    row.querySelector('button').textContent = 'Done \u2713';
-    row.querySelector('button').disabled = true;
-    document.getElementById('m-due').textContent = Math.max(0, parseInt(document.getElementById('m-due').textContent)-1);
-  }
+function updateMetrics(){
+  const tot=leads.reduce((s,l)=>s+l.value,0);
+  document.getElementById('m-leads').textContent=leads.length;
+  document.getElementById('m-value').textContent='$'+Math.round(tot/1000)+'k';
+  document.getElementById('m-deals').textContent=leads.filter(l=>l.status==='Contacted'||l.status==='Qualified').length;
+  document.getElementById('m-new').textContent=newToday;
+}
 
-  function updateMetrics() {
-    const tot = leads.reduce((s,l) => s+l.value, 0);
-    document.getElementById('m-leads').textContent = leads.length;
-    document.getElementById('m-value').textContent = '$' + Math.round(tot/1000) + 'k';
-    document.getElementById('m-deals').textContent = leads.filter(l => l.status==='Contacted'||l.status==='Qualified').length;
-  }
+function addLead(){
+  const co=document.getElementById('nl-co').value.trim();if(!co)return;
+  const initials=co.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  leads.push({id:Date.now(),company:co,contact:document.getElementById('nl-cn').value.trim(),phone:document.getElementById('nl-ph').value.trim(),email:document.getElementById('nl-em').value.trim(),industry:document.getElementById('nl-in').value,size:document.getElementById('nl-sz').value,status:'New',value:parseInt(document.getElementById('nl-val').value)||0,initials,av:leads.length%AVC.length});
+  ['nl-co','nl-cn','nl-ph','nl-em','nl-val'].forEach(id=>document.getElementById(id).value='');
+  closeM();renderLeads();
+}
 
-  function openModal(id) { document.getElementById('modal-'+id).classList.add('open'); }
-  function closeModals() {
-    document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('open'));
-    const out = document.getElementById('ai-output');
-    out.style.display = 'none'; out.textContent = '';
-  }
+/* CALLS */
+function callLead(id){
+  const l=leads.find(x=>x.id===id);if(!l)return;
+  document.getElementById('qc-lead').value='';
+  document.getElementById('qc-ph').value=l.phone||'';
+  renderQCBtns(l.phone||'',l.contact,l.company);
+  openM('quick-call');
+}
 
-  function addLead() {
-    const company = document.getElementById('new-company').value.trim();
-    if (!company) return;
-    const contact = document.getElementById('new-contact').value.trim();
-    const initials = company.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-    leads.push({ id:Date.now(), company, contact,
-      industry: document.getElementById('new-industry').value,
-      size: document.getElementById('new-size').value,
-      status:'New', value: parseInt(document.getElementById('new-value').value)||0,
-      initials, av: leads.length % avColors.length });
-    ['new-company','new-contact','new-value'].forEach(id => document.getElementById(id).value='');
-    closeModals(); renderLeads();
-  }
+function popQC(){
+  const id=parseInt(document.getElementById('qc-lead').value);
+  const l=leads.find(x=>x.id===id);if(!l)return;
+  document.getElementById('qc-ph').value=l.phone||'';
+  renderQCBtns(l.phone||'',l.contact,l.company);
+}
 
-  function openOutreach(id) {
-    currentLead = leads.find(l => l.id===id);
-    document.getElementById('outreach-title').textContent = 'Outreach for ' + currentLead.company;
-    document.getElementById('ai-output').style.display = 'none';
-    document.getElementById('ai-output').textContent = '';
-    openModal('outreach');
-  }
+function renderQCBtns(ph,name,co){
+  const c=document.getElementById('qc-btns');
+  if(!ph){c.innerHTML='<span style="font-size:13px;color:#6b6b66;">No phone number on record.</span>';return;}
+  const sn=name.replace(/'/g,"\'");const sc=co.replace(/'/g,"\'");
+  let h=`<a href="tel:${ph}" class="btn primary" style="text-decoration:none;" onclick="autoLog('${sn}','${sc}','${ph}','outbound')">&#128222; Call (tel:)</a>`;
+  h+=`<a href="msteams://l/call/0/0?users=${encodeURIComponent(ph)}" class="btn teams" style="text-decoration:none;" onclick="autoLog('${sn}','${sc}','${ph}','outbound')">&#128187; Teams</a>`;
+  if(pbxS&&pbxS!=='tel:') h+=`<a href="${pbxS}${ph}" class="btn" style="text-decoration:none;" onclick="autoLog('${sn}','${sc}','${ph}','outbound')">&#128222; PBX</a>`;
+  h+=`<button class="btn" onclick="prefillLog('${sn}','${sc}','${ph}')">+ Log manually</button>`;
+  c.innerHTML=h;
+}
 
-  async function generateOutreach() {
-    if (!currentLead) return;
-    if (!anthKey) { alert('Please enter your Anthropic API key in the banner at the top.'); return; }
-    const type = document.getElementById('outreach-type').value;
-    const pain = document.getElementById('outreach-pain').value;
-    const out  = document.getElementById('ai-output');
-    out.style.display='block';
-    out.innerHTML='<span class="spinner"></span> Generating...';
-    const prompt = `You are an expert IT account manager. Write a short, professional ${type} for:
-Company: ${currentLead.company}
-Contact: ${currentLead.contact}
-Industry: ${currentLead.industry}
-Size: ${currentLead.size}
-${currentLead.email ? 'Email: ' + currentLead.email : ''}
+function autoLog(name,co,ph,dir){
+  callLog.unshift({id:Date.now(),contact:`${name} — ${co}`,phone:ph,direction:dir,duration:0,notes:'Auto-logged',date:new Date().toISOString(),followup:''});
+  localStorage.setItem('itp_calls',JSON.stringify(callLog));
+}
+
+function prefillLog(name,co,ph){
+  closeM();
+  document.getElementById('lc-ct').value=`${name} — ${co}`;
+  document.getElementById('lc-ph').value=ph;
+  openM('log-call');
+}
+
+function swCallTab(t,btn){
+  callTab=t;
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+  btn.classList.add('active');renderCalls();
+}
+
+function renderCalls(){
+  const qcSel=document.getElementById('qc-lead');
+  qcSel.innerHTML='<option value="">— choose a lead —</option>'+leads.filter(l=>l.phone).map(l=>`<option value="${l.id}">${l.contact} — ${l.company}</option>`).join('');
+  const f=callTab==='all'?callLog:callLog.filter(c=>c.direction===callTab);
+  const el=document.getElementById('calls-list');
+  if(!f.length){el.innerHTML='<div style="padding:14px;font-size:13px;color:#6b6b66;">No calls logged yet. Use "Log call" or tap &#128222; on any lead.</div>';return;}
+  el.innerHTML=f.map(c=>{
+    const d=new Date(c.date).toLocaleDateString('en-CA',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
+    const ic=c.direction==='outbound'?'cout':c.direction==='inbound'?'cin':'cmiss';
+    const ico=c.direction==='outbound'?'&#8599;':c.direction==='inbound'?'&#8600;':'&#10006;';
+    const dur=c.duration>0?c.duration+' min':'No answer';
+    const sct=c.contact.replace(/'/g,"\'");const sph=(c.phone||'').replace(/'/g,"\'");
+    return `<div class="crow"><div class="cicon ${ic}">${ico}</div><div class="ci"><div class="cn2">${c.contact}</div><div class="cm">${d} &middot; ${dur}${c.followup?' &middot; Follow-up: '+c.followup:''}</div></div><div class="ca">${c.notes&&c.notes!=='Auto-logged'?`<button class="btn" onclick="viewNotes(${c.id})" style="font-size:12px;padding:4px 8px;">Notes</button>`:''} ${c.phone?`<a href="tel:${c.phone}" class="btn" style="font-size:12px;padding:4px 8px;text-decoration:none;">&#128222; Call back</a>`:''} <button class="btn" onclick="outreachFromCall('${sct}','${sph}')" style="font-size:12px;padding:4px 8px;">Outreach &#8599;</button></div></div>`;
+  }).join('');
+}
+
+function viewNotes(id){
+  const c=callLog.find(x=>x.id===id);if(!c)return;
+  document.getElementById('cno-title').textContent='Call notes — '+c.contact;
+  document.getElementById('cno-body').innerHTML=`<p style="margin-bottom:8px;font-weight:500;">Notes:</p><p style="white-space:pre-wrap;">${c.notes||'No notes.'}</p>${c.followup?'<p style="margin-top:10px;font-weight:500;">Follow-up: </p><p>'+c.followup+'</p>':''}`;
+  openM('call-notes');
+}
+
+function outreachFromCall(ct,ph){
+  const name=ct.split('—')[0].trim();
+  curLead={company:ct,contact:name,phone:ph,industry:'',size:'',email:''};
+  document.getElementById('ot-title').textContent='Outreach for '+name;
+  document.getElementById('ai-out').style.display='none';document.getElementById('ai-out').textContent='';
+  document.getElementById('ot-type').value='Post-call follow-up';
+  openM('outreach');
+}
+
+function logCall(){
+  const ct=document.getElementById('lc-ct').value.trim();if(!ct)return;
+  const entry={id:Date.now(),contact:ct,phone:document.getElementById('lc-ph').value.trim(),direction:document.getElementById('lc-dir').value,duration:parseInt(document.getElementById('lc-dur').value),notes:document.getElementById('lc-notes').value.trim(),date:new Date().toISOString(),followup:document.getElementById('lc-fu').value};
+  callLog.unshift(entry);localStorage.setItem('itp_calls',JSON.stringify(callLog));
+  if(entry.followup){reminders.push({label:'Follow up with '+ct,sub:'Scheduled: '+entry.followup,urg:'a'});}
+  ['lc-ct','lc-ph','lc-notes','lc-fu'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('lc-dur').value='0';
+  closeM();renderCalls();
+}
+
+/* OUTREACH */
+function openOutreach(id){
+  curLead=leads.find(l=>l.id===id);
+  document.getElementById('ot-title').textContent='Outreach for '+curLead.company;
+  document.getElementById('ai-out').style.display='none';document.getElementById('ai-out').textContent='';
+  openM('outreach');
+}
+
+async function genOutreach(){
+  if(!curLead)return;
+  if(!anthK){alert('Please enter your Anthropic API key.');return;}
+  const type=document.getElementById('ot-type').value;
+  const pain=document.getElementById('ot-pain').value;
+  const o=document.getElementById('ai-out');
+  o.style.display='block';o.innerHTML='<span class="spin"></span> Generating...';
+  const prompt=`You are an expert IT account manager. Write a short, professional ${type} for:
+Company: ${curLead.company}
+Contact: ${curLead.contact}
+Industry: ${curLead.industry||'unknown'}
+Size: ${curLead.size||'unknown'}
+${curLead.email?'Email: '+curLead.email:''}
+${curLead.phone?'Phone: '+curLead.phone:''}
 Pain point: ${pain||'general IT modernisation and managed IT services'}
 Max 120 words. Just the message body — no subject line, no placeholders. Sound human, not salesy.`;
-    try {
-      const resp = await fetch('https://api.anthropic.com/v1/messages', {
-        method:'POST',
-        headers:{'Content-Type':'application/json','x-api-key':anthKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-calls':'true'},
-        body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:300, messages:[{role:'user',content:prompt}] })
-      });
-      const data = await resp.json();
-      if (data.error) { out.textContent='API error: '+data.error.message; return; }
-      out.textContent = data.content?.map(c=>c.text||'').join('')||'No response.';
-    } catch(e) { out.textContent='Error: '+e.message; }
-  }
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':anthK,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-calls':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:300,messages:[{role:'user',content:prompt}]})});
+    const d=await r.json();if(d.error){o.textContent='API error: '+d.error.message;return;}
+    o.textContent=d.content?.map(c=>c.text||'').join('')||'No response.';
+  }catch(e){o.textContent='Error: '+e.message;}
+}
 
-  function copyOutreach() {
-    const text = document.getElementById('ai-output').textContent;
-    if (!text||text.includes('Generating')) return;
-    navigator.clipboard.writeText(text).then(()=>{
-      const btn=event.target; btn.textContent='Copied!';
-      setTimeout(()=>btn.textContent='Copy message',1500);
-    });
-  }
+function copyOutreach(){
+  const t=document.getElementById('ai-out').textContent;
+  if(!t||t.includes('Generating'))return;
+  navigator.clipboard.writeText(t).then(()=>{const b=event.target;b.textContent='Copied!';setTimeout(()=>b.textContent='Copy message',1500);});
+}
 
-  function confirmImport() {
-    if (!pendingImport) return;
-    const company  = document.getElementById('imp-company').value.trim()||pendingImport.company;
-    const contact  = document.getElementById('imp-contact').value.trim()||pendingImport.name;
-    const initials = company.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-    leads.push({
-      id:Date.now(), company, contact, email: pendingImport.email,
-      industry: document.getElementById('imp-industry').value,
-      size: document.getElementById('imp-size').value,
-      status:'New', value: parseInt(document.getElementById('imp-value').value)||0,
-      initials, av: leads.length % avColors.length
-    });
-    pendingImport = null;
-    closeModals();
-    renderLeads();
-    document.querySelectorAll('.section').forEach(el=>el.classList.remove('active'));
-    document.querySelectorAll('.nav-btn').forEach(el=>el.classList.remove('active'));
-    document.getElementById('section-leads').classList.add('active');
-    document.querySelector('.nav-btn').classList.add('active');
-  }
+/* IMPORT */
+function confirmImport(){
+  if(!pendImport)return;
+  const co=document.getElementById('imp-co').value.trim()||pendImport.company;
+  const cn=document.getElementById('imp-cn').value.trim()||pendImport.name;
+  const init=co.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  leads.push({id:Date.now(),company:co,contact:cn,email:pendImport.email,phone:'',industry:document.getElementById('imp-in').value,size:document.getElementById('imp-sz').value,status:'New',value:parseInt(document.getElementById('imp-val').value)||0,initials:init,av:leads.length%AVC.length});
+  pendImport=null;closeM();renderLeads();
+  document.querySelectorAll('.section').forEach(e=>e.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(e=>e.classList.remove('active'));
+  document.getElementById('section-leads').classList.add('active');
+  document.querySelector('.nav-btn').classList.add('active');
+}
 
-  /* ---- PROSPECT SEARCH ---- */
+/* DAILY DISCOVERY */
+function renderDiscovery(){
+  const ss=document.getElementById('saved-searches');
+  if(!savedSearches.length){ss.innerHTML='<p style="font-size:13px;color:#6b6b66;padding:4px 0;">No saved searches yet. Click "+ Save search" to create one.</p>';return;}
+  ss.innerHTML=savedSearches.map((s,i)=>`<div class="drow"><div class="di"><div class="dn2">${s.name}</div><div class="dp">${[s.city,s.industry,s.keyword].filter(Boolean).join(' &middot; ')||'All companies'}</div></div><div class="da"><button class="btn" onclick="runOne(${i})" style="font-size:12px;padding:4px 9px;">&#9654; Run</button><button class="btn" onclick="delSearch(${i})" style="font-size:12px;padding:4px 9px;color:#E24B4A;">&#10005;</button></div></div>`).join('');
+}
 
-  function googleIcon() {
-    return `<svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>`;
-  }
+async function runAllDisc(){
+  if(!huntK){alert('Please enter your Hunter.io API key.');return;}
+  const btn=document.getElementById('run-all-btn');btn.disabled=true;btn.textContent='Running...';
+  document.getElementById('disc-results').innerHTML='<div class="lstate"><span class="spin"></span> Searching for new prospects...</div>';
+  discResults=[];newToday=0;
+  for(let i=0;i<savedSearches.length;i++) await runOne(i,true);
+  renderDiscResults();
+  btn.disabled=false;btn.innerHTML='&#9654; Run all now';
+  document.getElementById('m-new').textContent=newToday;
+  const nb=document.getElementById('disc-btn');
+  if(newToday>0){let sp=nb.querySelector('.nbadge');if(!sp){sp=document.createElement('span');sp.className='nbadge';nb.appendChild(sp);}sp.textContent=newToday;}
+}
 
-  function linkedinIcon() {
-    return `<svg width="13" height="13" viewBox="0 0 24 24" fill="#0A66C2"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>`;
-  }
-
-  function toggleSize(btn, val) {
-    document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    selectedSize = val;
-  }
-
-  function clearSearch() {
-    document.getElementById('natural-query').value = '';
-    document.getElementById('f-city').value = '';
-    document.getElementById('f-industry').value = '';
-    document.getElementById('f-keyword').value = '';
-    document.getElementById('f-mincontacts').value = '0';
-    toggleSize(document.querySelector('.size-btn'), '');
-    document.getElementById('results-area').innerHTML = `<div class="empty-state"><div style="font-size:28px;margin-bottom:8px;">&#128269;</div><div>Describe the kind of business you're looking for, then hit search.</div></div>`;
-  }
-
-  async function parseAndSearch() {
-    const q = document.getElementById('natural-query').value.trim();
-    if (!q) { doSearch(); return; }
-    const btn = document.getElementById('ai-parse-btn');
-    btn.disabled=true; btn.textContent='Parsing...';
-    if (anthKey) {
-      try {
-        const resp = await fetch('https://api.anthropic.com/v1/messages', {
-          method:'POST',
-          headers:{'Content-Type':'application/json','x-api-key':anthKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-calls':'true'},
-          body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:200,
-            messages:[{role:'user',content:`Extract search parameters from this prospect search query. Return ONLY valid JSON with: city (string), industry (one of: Finance, Healthcare, Manufacturing, Retail, Technology, Education, Legal, Construction, Hospitality, Logistics, or ""), keyword (string), size (one of: 1-10, 11-50, 51-200, 201-500, 500+, or ""). Query: "${q}"`}]
-          })
-        });
-        const data = await resp.json();
-        const parsed = JSON.parse(data.content?.map(c=>c.text||'').join('').replace(/```json|```/g,'').trim()||'{}');
-        if (parsed.city)     document.getElementById('f-city').value = parsed.city;
-        if (parsed.industry) document.getElementById('f-industry').value = parsed.industry;
-        if (parsed.keyword)  document.getElementById('f-keyword').value = parsed.keyword;
-        if (parsed.size) {
-          document.querySelectorAll('.size-btn').forEach(b => {
-            if (b.getAttribute('onclick') && b.getAttribute('onclick').includes(`'${parsed.size}'`)) toggleSize(b, parsed.size);
-          });
-        }
-      } catch(e) { extractManually(q); }
-    } else { extractManually(q); }
-    btn.disabled=false; btn.innerHTML='Search &#8599;';
-    doSearch();
-  }
-
-  function extractManually(q) {
-    const lower = q.toLowerCase();
-    const cities = ['niagara falls','toronto','hamilton','ottawa','mississauga','brampton','london','kitchener','windsor','st catharines','new york','chicago','los angeles','houston','buffalo','detroit','vancouver','calgary','edmonton'];
-    for (const c of cities) { if (lower.includes(c)) { document.getElementById('f-city').value = c.split(' ').map(w=>w[0].toUpperCase()+w.slice(1)).join(' '); break; } }
-    const inds = ['finance','healthcare','manufacturing','retail','technology','education','legal','construction','hospitality','logistics'];
-    for (const i of inds) { if (lower.includes(i)) { document.getElementById('f-industry').value = i[0].toUpperCase()+i.slice(1); break; } }
-    if (lower.includes('law')) document.getElementById('f-keyword').value = 'law firm';
-    else if (lower.includes('clinic')||lower.includes('dental')) document.getElementById('f-keyword').value = 'clinic';
-    else if (lower.includes('account')) document.getElementById('f-keyword').value = 'accounting';
-    else if (lower.includes('manufactur')) document.getElementById('f-keyword').value = 'manufacturer';
-  }
-
-  async function doSearch() {
-    const city    = document.getElementById('f-city').value.trim();
-    const industry= document.getElementById('f-industry').value;
-    const keyword = document.getElementById('f-keyword').value.trim();
-    const minC    = parseInt(document.getElementById('f-mincontacts').value)||0;
-    const btn = document.getElementById('search-btn');
-    btn.disabled=true; btn.textContent='Searching...';
-
-    if (!huntKey) {
-      renderNoHunterResults(city, industry, keyword);
-      btn.disabled=false; btn.textContent='Find prospects';
-      return;
+async function runOne(i,batch=false){
+  const s=savedSearches[i];if(!s)return;
+  const q=[s.keyword,s.industry,s.city].filter(Boolean).join(' ');
+  if(!q)return;
+  try{
+    const r=await fetch(`https://api.hunter.io/v2/domain-search?company=${encodeURIComponent(q)}&limit=5&api_key=${huntK}`);
+    const d=await r.json();
+    if(d.data&&d.data.domain){
+      const isNew=!seenDomains.has(d.data.domain);
+      if(isNew){seenDomains.add(d.data.domain);newToday++;localStorage.setItem('itp_seen',JSON.stringify([...seenDomains]));}
+      discResults.push({...d.data,isNew,searchName:s.name});
     }
+  }catch(e){}
+  if(!batch){renderDiscResults();document.getElementById('m-new').textContent=newToday;}
+}
 
-    document.getElementById('results-area').innerHTML='<div class="loading-state"><span class="spinner"></span> Searching Hunter.io for matching companies...</div>';
+function renderDiscResults(){
+  const el=document.getElementById('disc-results');
+  if(!discResults.length){el.innerHTML='<div class="estate"><div style="font-size:26px;margin-bottom:8px;">&#128197;</div><div>No results yet. Hit "Run all now" to fetch today\'s prospects.</div></div>';return;}
+  const newOnes=discResults.filter(r=>r.isNew);
+  const old=discResults.filter(r=>!r.isNew);
+  let html='';
+  if(newOnes.length) html+=`<div style="font-size:13px;font-weight:500;margin-bottom:10px;color:#185FA5;">&#127381; ${newOnes.length} new compan${newOnes.length===1?'y':'ies'} found today</div>`;
+  html+=[...newOnes,...old].map(c=>renderDiscCard(c)).join('');
+  el.innerHTML=html;
+}
 
-    const queries = buildQueries(city, industry, keyword);
-    const seen = new Set();
-    let companies = [];
+function renderDiscCard(c){
+  const org=c.organization||c.domain||'Unknown';
+  const init=org.split(/[\s.]+/).map(w=>w[0]).filter(Boolean).join('').slice(0,2).toUpperCase();
+  const emails=c.emails||[];
+  const newLabel=c.isNew?'<span class="new-tag">NEW TODAY</span>':'';
+  const gUrl='https://www.google.com/search?q='+encodeURIComponent(org+' IT services');
+  const liUrl='https://www.linkedin.com/search/results/companies/?keywords='+encodeURIComponent(org);
+  const mUrl='https://www.google.com/maps/search/'+encodeURIComponent(org);
+  return `<div class="drcard${c.isNew?' isnew':''}"><div class="drtop"><div class="drlogo">${init}</div><div class="drinfo"><div class="drname">${org}${newLabel}</div><div class="drdom">${c.domain||''} &middot; from: ${c.searchName||''}</div></div><div style="display:flex;gap:6px;flex-shrink:0;">${emails.length?`<button class="btn" style="font-size:12px;padding:4px 9px;">${emails.length} contact${emails.length!==1?'s':''}</button>`:''}${emails.length?`<button class="btn primary" onclick="openImpDisc('${(emails[0]?.first_name||'')+' '+(emails[0]?.last_name||'')}'.trim(),'${emails[0]?.value||''}','${org.replace(/'/g,"\'")}')">+ Lead</button>`:''}</div></div><div class="resrow"><span class="reslbl">Research:</span><a class="ebt google" href="${gUrl}" target="_blank">${gIco()} Google</a><a class="ebt linkedin" href="${liUrl}" target="_blank">${liIco()} LinkedIn</a><a class="ebt" href="${mUrl}" target="_blank">&#128205; Maps</a></div></div>`;
+}
 
-    for (const q of queries) {
-      try {
-        const resp = await fetch(`https://api.hunter.io/v2/domain-search?company=${encodeURIComponent(q)}&limit=5&api_key=${huntKey}`);
-        const data = await resp.json();
-        if (data.data && data.data.domain && !seen.has(data.data.domain)) {
-          seen.add(data.data.domain);
-          companies.push(data.data);
-        }
-      } catch(e) {}
-    }
+function openImpDisc(name,email,company){
+  pendImport={name:name.trim(),email,company};
+  document.getElementById('imp-title').textContent='Import '+name.trim();
+  document.getElementById('imp-co').value=company;
+  document.getElementById('imp-cn').value=name.trim();
+  document.getElementById('imp-em').value=email;
+  document.getElementById('imp-val').value='';
+  openM('import');
+}
 
-    if (minC > 0) companies = companies.filter(c => (c.emails||[]).length >= minC);
-    lastResults = companies;
-    renderResults(companies, city, industry, keyword);
-    btn.disabled=false; btn.textContent='Find prospects';
-  }
+function saveSS(){
+  const name=document.getElementById('ss-name').value.trim();
+  if(!name){alert('Please give the search a name.');return;}
+  savedSearches.push({name,city:document.getElementById('ss-city').value.trim(),industry:document.getElementById('ss-ind').value,keyword:document.getElementById('ss-kw').value.trim()});
+  localStorage.setItem('itp_ss',JSON.stringify(savedSearches));
+  ['ss-name','ss-city','ss-kw'].forEach(id=>document.getElementById(id).value='');
+  closeM();renderDiscovery();
+  if(huntK) runAllDisc();
+}
 
-  function buildQueries(city, industry, keyword) {
-    const parts = [];
-    if (keyword) parts.push(keyword);
-    if (industry) parts.push(industry);
-    if (city) parts.push(city);
-    const q = [];
-    if (parts.length) q.push(parts.join(' '));
-    if (city && keyword) q.push(keyword + ' ' + city);
-    if (city && industry) q.push(industry + ' ' + city);
-    return [...new Set(q)].slice(0,4);
-  }
+function delSearch(i){savedSearches.splice(i,1);localStorage.setItem('itp_ss',JSON.stringify(savedSearches));renderDiscovery();}
 
-  function renderNoHunterResults(city, industry, keyword) {
-    const gUrl  = 'https://www.google.com/search?q=' + encodeURIComponent([keyword||industry||'companies', city, 'IT services'].filter(Boolean).join(' '));
-    const liUrl = 'https://www.linkedin.com/search/results/companies/?keywords=' + encodeURIComponent([keyword||industry, city].filter(Boolean).join(' '));
-    const mUrl  = 'https://www.google.com/maps/search/' + encodeURIComponent([keyword||industry||'businesses', city].filter(Boolean).join(' '));
-    document.getElementById('results-area').innerHTML = `
-      <div class="company-card">
-        <div style="font-size:14px;font-weight:500;margin-bottom:6px;">Search for ${[keyword,industry,city].filter(Boolean).join(', ')||'prospects'}</div>
-        <div style="font-size:13px;color:#6b6b66;margin-bottom:14px;">Add a Hunter.io key for email contacts — or use these direct search links:</div>
-        <div class="research-row" style="border-top:none;padding-top:0;">
-          <a class="ext-btn google" href="${gUrl}" target="_blank">${googleIcon()} Google</a>
-          <a class="ext-btn linkedin" href="${liUrl}" target="_blank">${linkedinIcon()} LinkedIn companies</a>
-          <a class="ext-btn" href="${mUrl}" target="_blank">&#128205; Google Maps</a>
-        </div>
-      </div>`;
-  }
+function saveCurrentSearch(){
+  const city=document.getElementById('f-city').value.trim();
+  const ind=document.getElementById('f-ind').value;
+  const kw=document.getElementById('f-kw').value.trim();
+  if(!city&&!ind&&!kw){alert('Please set at least one filter to save.');return;}
+  const name=[kw,ind,city].filter(Boolean).join(' — ')||'My search';
+  savedSearches.push({name,city,industry:ind,keyword:kw});
+  localStorage.setItem('itp_ss',JSON.stringify(savedSearches));
+  alert('Search saved to Daily Discovery!');
+}
 
-  function renderResults(companies, city, industry, keyword) {
-    const area = document.getElementById('results-area');
-    if (!companies.length) {
-      const gUrl  = 'https://www.google.com/search?q=' + encodeURIComponent([keyword||industry||'companies', city, 'IT services'].filter(Boolean).join(' '));
-      const liUrl = 'https://www.linkedin.com/search/results/companies/?keywords=' + encodeURIComponent([keyword||industry, city].filter(Boolean).join(' '));
-      area.innerHTML = `<div class="empty-state">
-        <div style="font-size:24px;margin-bottom:8px;">&#128269;</div>
-        <div style="margin-bottom:14px;">No companies found in Hunter.io — try these direct searches:</div>
-        <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
-          <a class="ext-btn google" href="${gUrl}" target="_blank">${googleIcon()} Google</a>
-          <a class="ext-btn linkedin" href="${liUrl}" target="_blank">${linkedinIcon()} LinkedIn</a>
-        </div>
-      </div>`;
-      return;
-    }
-    const tags = [city,industry,keyword].filter(Boolean).map(t=>`<span class="tag tag-blue">${t}</span>`).join('');
-    area.innerHTML = `<div class="results-header">
-      <div class="results-count">${companies.length} compan${companies.length===1?'y':'ies'} found ${tags}</div>
-      <button class="btn" onclick="exportCSV()" style="font-size:12px;padding:5px 10px;">Export CSV</button>
-    </div>` + companies.map((c,i) => renderCompanyCard(c, i, city, industry, keyword)).join('');
-  }
+/* PROSPECT SEARCH */
+function tgSz(btn,val){document.querySelectorAll('.szbtn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');selSz=val;}
+function clearSearch(){['f-city','f-kw'].forEach(id=>document.getElementById(id).value='');document.getElementById('f-ind').value='';document.getElementById('f-mc').value='0';document.getElementById('nq').value='';tgSz(document.querySelector('.szbtn'),'');document.getElementById('results-area').innerHTML='<div class="estate"><div style="font-size:26px;margin-bottom:8px;">&#128269;</div><div>Describe the kind of business you\'re looking for, then hit search.</div></div>';}
 
-  function renderCompanyCard(c, i, city, industry, keyword) {
-    const org = c.organization || c.domain || 'Unknown';
-    const initials = org.split(/[\s.]+/).map(w=>w[0]).filter(Boolean).join('').slice(0,2).toUpperCase();
-    const emails = c.emails||[];
+async function parseAndSearch(){
+  const q=document.getElementById('nq').value.trim();if(!q){doSearch();return;}
+  const btn=document.getElementById('ai-btn');btn.disabled=true;btn.textContent='Parsing...';
+  if(anthK){
+    try{
+      const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':anthK,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-calls':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:200,messages:[{role:'user',content:`Extract search params from this prospect search query. Return ONLY valid JSON with: city (string), industry (one of: Finance,Healthcare,Manufacturing,Retail,Technology,Education,Legal,Construction,Hospitality,Logistics, or ""), keyword (string), size (one of: 1-10,11-50,51-200,201-500,500+, or ""). Query: "${q}"`}]})});
+      const d=await r.json();
+      const p=JSON.parse(d.content?.map(c=>c.text||'').join('').replace(/```json|```/g,'').trim()||'{}');
+      if(p.city)document.getElementById('f-city').value=p.city;
+      if(p.industry)document.getElementById('f-ind').value=p.industry;
+      if(p.keyword)document.getElementById('f-kw').value=p.keyword;
+      if(p.size){document.querySelectorAll('.szbtn').forEach(b=>{if(b.getAttribute('onclick')&&b.getAttribute('onclick').includes("'"+p.size+"'"))tgSz(b,p.size);});}
+    }catch(e){extractMan(q);}
+  }else extractMan(q);
+  btn.disabled=false;btn.innerHTML='Search &#8599;';doSearch();
+}
 
-    const sizeTag  = c.size     ? `<span class="tag tag-amber">${c.size} employees</span>` : '';
-    const indTag   = c.industry ? `<span class="tag tag-green">${c.industry}</span>` : '';
-    const countTag = `<span class="tag tag-gray">${emails.length} contact${emails.length!==1?'s':''}</span>`;
+function extractMan(q){
+  const l=q.toLowerCase();
+  const cities=['niagara falls','toronto','hamilton','ottawa','mississauga','brampton','london','kitchener','windsor','st catharines','new york','chicago','buffalo','detroit','vancouver','calgary','edmonton'];
+  for(const c of cities){if(l.includes(c)){document.getElementById('f-city').value=c.split(' ').map(w=>w[0].toUpperCase()+w.slice(1)).join(' ');break;}}
+  const inds=['finance','healthcare','manufacturing','retail','technology','education','legal','construction','hospitality','logistics'];
+  for(const i of inds){if(l.includes(i)){document.getElementById('f-ind').value=i[0].toUpperCase()+i.slice(1);break;}}
+  if(l.includes('law'))document.getElementById('f-kw').value='law firm';
+  else if(l.includes('clinic')||l.includes('dental'))document.getElementById('f-kw').value='clinic';
+  else if(l.includes('account'))document.getElementById('f-kw').value='accounting';
+}
 
-    const gUrl    = 'https://www.google.com/search?q=' + encodeURIComponent([org, city, 'IT services'].filter(Boolean).join(' '));
-    const liCoUrl = 'https://www.linkedin.com/search/results/companies/?keywords=' + encodeURIComponent([org, city].filter(Boolean).join(' '));
-    const liPplUrl= 'https://www.linkedin.com/search/results/people/?keywords=' + encodeURIComponent(org) + '&titleKeyword=IT+Manager';
-    const mapsUrl = 'https://www.google.com/maps/search/' + encodeURIComponent([org, city].filter(Boolean).join(' '));
-    const newsUrl = 'https://www.google.com/search?q=' + encodeURIComponent(org + ' news') + '&tbm=nws';
+async function doSearch(){
+  const city=document.getElementById('f-city').value.trim();
+  const ind=document.getElementById('f-ind').value;
+  const kw=document.getElementById('f-kw').value.trim();
+  const minC=parseInt(document.getElementById('f-mc').value)||0;
+  const btn=document.getElementById('search-btn');btn.disabled=true;btn.textContent='Searching...';
+  if(!huntK){renderNoHunter(city,ind,kw);btn.disabled=false;btn.textContent='Find prospects';return;}
+  document.getElementById('results-area').innerHTML='<div class="lstate"><span class="spin"></span> Searching Hunter.io...</div>';
+  const queries=bldQ(city,ind,kw);const seen=new Set();let cos=[];
+  for(const q of queries){try{const r=await fetch(`https://api.hunter.io/v2/domain-search?company=${encodeURIComponent(q)}&limit=5&api_key=${huntK}`);const d=await r.json();if(d.data&&d.data.domain&&!seen.has(d.data.domain)){seen.add(d.data.domain);cos.push(d.data);}}catch(e){}}
+  if(minC>0)cos=cos.filter(c=>(c.emails||[]).length>=minC);
+  lastRes=cos;renderResults(cos,city,ind,kw);btn.disabled=false;btn.textContent='Find prospects';
+}
 
-    const contactsHTML = emails.length ? emails.slice(0,6).map(e => {
-      const name = [e.first_name,e.last_name].filter(Boolean).join(' ')||'Unknown';
-      const av   = name.split(' ').map(w=>w[0]).filter(Boolean).join('').slice(0,2).toUpperCase();
-      const confClass = e.confidence>=80?'conf-high':e.confidence>=50?'conf-med':'conf-low';
-      const liPerson  = 'https://www.linkedin.com/search/results/people/?keywords=' + encodeURIComponent(name + ' ' + org);
-      const safeN = name.replace(/'/g,"\\'"); const safeO = org.replace(/'/g,"\\'");
-      return `<div class="contact-row">
-        <div class="contact-av">${av}</div>
-        <div class="contact-info">
-          <div class="contact-name">${name}</div>
-          ${e.position?`<div class="contact-meta">${e.position}</div>`:''}
-          <div class="contact-email">${e.value}</div>
-        </div>
-        <div class="conf-dot ${confClass}" title="${e.confidence}% confidence"></div>
-        <div class="contact-actions">
-          <a class="ext-btn linkedin" href="${liPerson}" target="_blank" title="Find on LinkedIn">${linkedinIcon()}</a>
-          <button class="btn" onclick="openImport('${safeN}','${e.value}','${safeO}')" style="font-size:11px;padding:4px 8px;">+ Lead</button>
-        </div>
-      </div>`;
-    }).join('') : '<div class="no-contacts">No email contacts found in Hunter.io for this domain.</div>';
+function bldQ(city,ind,kw){
+  const p=[];if(kw)p.push(kw);if(ind)p.push(ind);if(city)p.push(city);
+  const q=[];if(p.length)q.push(p.join(' '));if(city&&kw)q.push(kw+' '+city);if(city&&ind)q.push(ind+' '+city);
+  return[...new Set(q)].slice(0,4);
+}
 
-    const toggleLabel = emails.length ? `View ${emails.length} contact${emails.length!==1?'s':''}` : 'No contacts';
+function renderNoHunter(city,ind,kw){
+  const gUrl='https://www.google.com/search?q='+encodeURIComponent([kw||ind||'companies',city,'IT services'].filter(Boolean).join(' '));
+  const liUrl='https://www.linkedin.com/search/results/companies/?keywords='+encodeURIComponent([kw||ind,city].filter(Boolean).join(' '));
+  document.getElementById('results-area').innerHTML=`<div class="cocard"><div style="font-size:13px;font-weight:500;margin-bottom:6px;">Search: ${[kw,ind,city].filter(Boolean).join(', ')||'prospects'}</div><div style="font-size:13px;color:#6b6b66;margin-bottom:13px;">Add a Hunter.io key for email contacts, or use these search links:</div><div class="resrow" style="border-top:none;padding-top:0;"><a class="ebt google" href="${gUrl}" target="_blank">${gIco()} Google</a><a class="ebt linkedin" href="${liUrl}" target="_blank">${liIco()} LinkedIn</a></div></div>`;
+}
 
-    return `<div class="company-card">
-      <div class="company-top">
-        <div class="company-logo">${initials}</div>
-        <div class="company-info">
-          <div class="company-name">${org}</div>
-          <div class="company-domain">${c.domain||''}</div>
-        </div>
-        <button class="btn" onclick="toggleContacts(${i})" id="toggle-${i}" style="font-size:12px;padding:5px 10px;">${toggleLabel}</button>
-      </div>
-      <div class="company-tags">${sizeTag}${indTag}${countTag}</div>
-      <div class="research-row">
-        <span class="research-label">Research:</span>
-        <a class="ext-btn google"   href="${gUrl}"     target="_blank">${googleIcon()} Google</a>
-        <a class="ext-btn linkedin" href="${liCoUrl}"  target="_blank">${linkedinIcon()} Company</a>
-        <a class="ext-btn linkedin" href="${liPplUrl}" target="_blank">${linkedinIcon()} IT contacts</a>
-        <a class="ext-btn"          href="${mapsUrl}"  target="_blank">&#128205; Maps</a>
-        <a class="ext-btn"          href="${newsUrl}"  target="_blank">&#128240; News</a>
-      </div>
-      <div class="company-contacts" id="contacts-${i}">${contactsHTML}</div>
-    </div>`;
-  }
+function renderResults(cos,city,ind,kw){
+  const el=document.getElementById('results-area');
+  if(!cos.length){const gUrl='https://www.google.com/search?q='+encodeURIComponent([kw||ind||'companies',city,'IT services'].filter(Boolean).join(' '));el.innerHTML=`<div class="estate"><div style="font-size:24px;margin-bottom:8px;">&#128269;</div><div style="margin-bottom:13px;">No companies found in Hunter.io — try:</div><a class="ebt google" href="${gUrl}" target="_blank" style="margin:0 auto;">${gIco()} Google search</a></div>`;return;}
+  const tags=[city,ind,kw].filter(Boolean).map(t=>`<span class="tag tbl">${t}</span>`).join('');
+  el.innerHTML=`<div class="rhead"><div class="rcnt">${cos.length} compan${cos.length===1?'y':'ies'} found ${tags}</div><button class="btn" onclick="expCSV()" style="font-size:12px;padding:4px 10px;">Export CSV</button></div>`+cos.map((c,i)=>renderCoCard(c,i,city,ind,kw)).join('');
+}
 
-  function toggleContacts(i) {
-    const el  = document.getElementById('contacts-'+i);
-    const btn = document.getElementById('toggle-'+i);
-    const open = el.classList.toggle('open');
-    const count = lastResults[i]?.emails?.length||0;
-    if (count) btn.textContent = open ? 'Hide contacts' : `View ${count} contact${count!==1?'s':''}`;
-  }
+function renderCoCard(c,i,city,ind,kw){
+  const org=c.organization||c.domain||'Unknown';
+  const init=org.split(/[\s.]+/).map(w=>w[0]).filter(Boolean).join('').slice(0,2).toUpperCase();
+  const emails=c.emails||[];
+  const gUrl='https://www.google.com/search?q='+encodeURIComponent([org,city,'IT services'].filter(Boolean).join(' '));
+  const liCo='https://www.linkedin.com/search/results/companies/?keywords='+encodeURIComponent([org,city].filter(Boolean).join(' '));
+  const liPpl='https://www.linkedin.com/search/results/people/?keywords='+encodeURIComponent(org)+'&titleKeyword=IT+Manager';
+  const mUrl='https://www.google.com/maps/search/'+encodeURIComponent([org,city].filter(Boolean).join(' '));
+  const nUrl='https://www.google.com/search?q='+encodeURIComponent(org+' news')+'&tbm=nws';
+  const cts=emails.length?emails.slice(0,6).map(e=>{
+    const nm=[e.first_name,e.last_name].filter(Boolean).join(' ')||'Unknown';
+    const av=nm.split(' ').map(w=>w[0]).filter(Boolean).join('').slice(0,2).toUpperCase();
+    const cf=e.confidence>=80?'cfh':e.confidence>=50?'cfm':'cfl';
+    const liP='https://www.linkedin.com/search/results/people/?keywords='+encodeURIComponent(nm+' '+org);
+    const sn=nm.replace(/'/g,"\'");const so=org.replace(/'/g,"\'");
+    return `<div class="ctrow"><div class="ctav">${av}</div><div class="ctinf"><div class="ctnm">${nm}</div>${e.position?`<div class="ctmt">${e.position}</div>`:''}<div class="ctem">${e.value}</div></div><div class="cfdot ${cf}" title="${e.confidence}% confidence"></div><div class="ctac"><a class="ebt linkedin" href="${liP}" target="_blank">${liIco()}</a><button class="btn" onclick="openImpSearch('${sn}','${e.value}','${so}')" style="font-size:11px;padding:3px 8px;">+ Lead</button></div></div>`;
+  }).join(''):'<div class="noctact">No email contacts found in Hunter.io for this domain.</div>';
+  const tlbl=emails.length?`View ${emails.length} contact${emails.length!==1?'s':''}`:'No contacts';
+  return `<div class="cocard"><div class="cotop"><div class="colog">${init}</div><div class="coinf"><div class="conm">${org}</div><div class="codom">${c.domain||''}</div></div><button class="btn" onclick="tgCts(${i})" id="ct-btn-${i}" style="font-size:12px;padding:4px 10px;">${tlbl}</button></div><div class="cotags">${c.size?`<span class="tag tam">${c.size} employees</span>`:''} ${c.industry?`<span class="tag tgr">${c.industry}</span>`:''} <span class="tag tgy">${emails.length} contact${emails.length!==1?'s':''}</span></div><div class="resrow"><span class="reslbl">Research:</span><a class="ebt google" href="${gUrl}" target="_blank">${gIco()} Google</a><a class="ebt linkedin" href="${liCo}" target="_blank">${liIco()} Company</a><a class="ebt linkedin" href="${liPpl}" target="_blank">${liIco()} IT contacts</a><a class="ebt" href="${mUrl}" target="_blank">&#128205; Maps</a><a class="ebt" href="${nUrl}" target="_blank">&#128240; News</a></div><div class="cocts" id="cocts-${i}">${cts}</div></div>`;
+}
 
-  function openImport(name, email, company) {
-    pendingImport = {name, email, company};
-    document.getElementById('import-title').textContent = 'Import ' + name;
-    document.getElementById('imp-company').value = company;
-    document.getElementById('imp-contact').value = name;
-    document.getElementById('imp-email').value   = email;
-    document.getElementById('imp-value').value   = '';
-    openModal('import');
-  }
+function tgCts(i){
+  const el=document.getElementById('cocts-'+i);const btn=document.getElementById('ct-btn-'+i);
+  const open=el.classList.toggle('open');
+  const cnt=lastRes[i]?.emails?.length||0;
+  if(cnt)btn.textContent=open?'Hide contacts':'View '+cnt+' contact'+(cnt!==1?'s':'');
+}
 
-  function exportCSV() {
-    const rows = [['Company','Domain','Industry','Size','Contact','Title','Email','Confidence']];
-    for (const c of lastResults) {
-      for (const e of (c.emails||[])) {
-        const name = [e.first_name,e.last_name].filter(Boolean).join(' ');
-        rows.push([c.organization||'',c.domain||'',c.industry||'',c.size||'',name,e.position||'',e.value,e.confidence||'']);
-      }
-    }
-    const csv = rows.map(r=>r.map(f=>`"${String(f).replace(/"/g,'""')}"`).join(',')).join('\n');
-    const a = document.createElement('a');
-    a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
-    a.download = 'prospects.csv'; a.click();
-  }
+function openImpSearch(name,email,company){
+  pendImport={name,email,company};
+  document.getElementById('imp-title').textContent='Import '+name;
+  document.getElementById('imp-co').value=company;
+  document.getElementById('imp-cn').value=name;
+  document.getElementById('imp-em').value=email;
+  document.getElementById('imp-val').value='';
+  openM('import');
+}
 
-  renderLeads();
-  renderReminders();
+function expCSV(){
+  const rows=[['Company','Domain','Industry','Size','Contact','Title','Email','Confidence']];
+  for(const c of lastRes)for(const e of(c.emails||[])){const nm=[e.first_name,e.last_name].filter(Boolean).join(' ');rows.push([c.organization||'',c.domain||'',c.industry||'',c.size||'',nm,e.position||'',e.value,e.confidence||'']);}
+  const csv=rows.map(r=>r.map(f=>`"${String(f).replace(/"/g,'""')}"`).join(',')).join('
+');
+  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download='prospects.csv';a.click();
+}
+
+/* ICONS */
+function gIco(){return`<svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>`;}
+function liIco(){return`<svg width="13" height="13" viewBox="0 0 24 24" fill="#0A66C2"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>`;}
+
+/* INIT */
+renderLeads();renderReminders();
+if(huntK&&savedSearches.length){setTimeout(runAllDisc,800);}
 </script>
 </body>
 </html>
